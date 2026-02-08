@@ -72,6 +72,36 @@ class ReconRangerInstaller:
                 return True
         return False
 
+    def _check_go_version_requirement(self, cfg: dict) -> Tuple[bool, str]:
+        """Check if current Go version meets tool requirements"""
+        required = cfg.get("go_version")
+        if not required:
+            return True, ""
+        
+        # Get current Go version
+        ok, output = self._run(["go", "version"], timeout=10)
+        if not ok:
+            return False, "Cannot determine Go version"
+        
+        # Parse version like "go version go1.23.5 linux/amd64"
+        match = re.search(r'go(\d+\.\d+(?:\.\d+)?)', output)
+        if not match:
+            return False, "Cannot parse Go version"
+        
+        current = match.group(1)
+        
+        # Compare versions
+        def parse_version(v):
+            return tuple(map(int, v.split('.')))
+        
+        try:
+            if parse_version(current) < parse_version(required):
+                return False, f"Go {required}+ required, found {current}"
+        except:
+            pass
+        
+        return True, ""
+
     def _get_version(self, binary: str) -> str:
         """Get installed version of a tool"""
         # Find the binary path
@@ -119,12 +149,25 @@ class ReconRangerInstaller:
     def install_go(self, name: str, cfg: dict) -> bool:
         """Install Go tool via apt or go install"""
         binary = cfg["binary"]
+        
+        # Check Go version requirement first
+        ok, msg = self._check_go_version_requirement(cfg)
+        if not ok:
+            error_logger.error(f"Skipping {name}: {msg}")
+            print(f"\r    {name} skipped: {msg}")
+            return False
+        
+        # Try apt only if available and quick
         if cfg.get("apt"):
-            ok, _ = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=180)
-            if ok and self._is_installed(binary):
-                return True
+            ok, _ = self._run(["apt-cache", "show", cfg["apt"]], timeout=10)
+            if ok:
+                ok, _ = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=60)
+                if ok and self._is_installed(binary):
+                    return True
+        
         # Ensure go bin directory exists
         self.gobin.mkdir(parents=True, exist_ok=True)
+        
         # Run go install with longer timeout for large tools
         print(f"    Downloading {name}...", end="", flush=True)
         ok, err = self._run(["go", "install", f"{cfg['package']}@latest"], timeout=600)
@@ -133,26 +176,26 @@ class ReconRangerInstaller:
             print(f"\r    {name} failed: {err[:100]}")
             return False
         print(f"\r    {name} compiled ")
-        if ok:
-            src = self.gobin / binary
-            if src.exists():
-                dst = self.bin_dir / binary
-                # Copy instead of symlink for reliability
-                if dst.exists():
-                    dst.unlink()
-                shutil.copy2(src, dst)
-                dst.chmod(0o755)
-                return self._is_installed(binary)
-            else:
-                # Binary might be in GOPATH/bin directly
-                for alt_src in [Path.home() / "go" / "bin" / binary, Path("/root/go/bin") / binary]:
-                    if alt_src.exists():
-                        dst = self.bin_dir / binary
-                        if dst.exists():
-                            dst.unlink()
-                        shutil.copy2(alt_src, dst)
-                        dst.chmod(0o755)
-                        return self._is_installed(binary)
+        
+        # Copy binary to /usr/local/bin
+        src = self.gobin / binary
+        if src.exists():
+            dst = self.bin_dir / binary
+            if dst.exists():
+                dst.unlink()
+            shutil.copy2(src, dst)
+            dst.chmod(0o755)
+            return self._is_installed(binary)
+        else:
+            # Binary might be in GOPATH/bin directly
+            for alt_src in [Path.home() / "go" / "bin" / binary, Path("/root/go/bin") / binary]:
+                if alt_src.exists():
+                    dst = self.bin_dir / binary
+                    if dst.exists():
+                        dst.unlink()
+                    shutil.copy2(alt_src, dst)
+                    dst.chmod(0o755)
+                    return self._is_installed(binary)
         return False
 
     def install_python(self, name: str, cfg: dict) -> bool:
