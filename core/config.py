@@ -12,7 +12,7 @@ TOOL_SCHEMA = {
 TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     "amass": {
         "type": "go",
-        "package": "github.com/owasp-amass/amass/v4/...",
+        "package": "github.com/owasp-amass/amass/v4/cmd/amass",
         "binary": "amass",
         "apt": "amass",
         "description": "In-depth attack surface mapping with graph visualization",

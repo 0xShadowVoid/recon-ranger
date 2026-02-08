@@ -45,10 +45,21 @@ class ReconRangerInstaller:
     def _run(self, cmd: list, cwd=None, timeout=300) -> Tuple[bool, str]:
         """Execute command, return (success, output)"""
         try:
-            env = {**os.environ, "GOBIN": str(self.gobin), "GOPATH": str(Path.home() / "go")}
+            env = {
+                **os.environ, 
+                "GOBIN": str(self.gobin), 
+                "GOPATH": str(Path.home() / "go"),
+                "GOPROXY": "https://proxy.golang.org,direct",
+                "GOSUMDB": "sum.golang.org",
+                "CGO_ENABLED": "0"
+            }
             r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd, env=env)
             return (r.returncode == 0, r.stderr if r.returncode else r.stdout)
+        except subprocess.TimeoutExpired as e:
+            error_logger.error(f"Command timed out: {' '.join(cmd)}")
+            return (False, f"Timeout after {timeout}s")
         except Exception as e:
+            error_logger.error(f"Command failed: {' '.join(cmd)} - {str(e)}")
             return (False, str(e))
 
     def _is_installed(self, binary: str) -> bool:
@@ -114,8 +125,14 @@ class ReconRangerInstaller:
                 return True
         # Ensure go bin directory exists
         self.gobin.mkdir(parents=True, exist_ok=True)
-        # Run go install with proper env
-        ok, err = self._run(["go", "install", "-v", f"{cfg['package']}@latest"], timeout=180)
+        # Run go install with longer timeout for large tools
+        print(f"    Downloading {name}...", end="", flush=True)
+        ok, err = self._run(["go", "install", f"{cfg['package']}@latest"], timeout=600)
+        if not ok:
+            error_logger.error(f"Failed to install {name}: {err}")
+            print(f"\r    {name} failed: {err[:100]}")
+            return False
+        print(f"\r    {name} compiled ")
         if ok:
             src = self.gobin / binary
             if src.exists():
