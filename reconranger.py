@@ -9,6 +9,7 @@ def main():
     parser = argparse.ArgumentParser(description="🦅 Universal Recon Toolkit Installer")
     parser.add_argument("-t", "--tools", nargs="+", help="Specific tools to install/update")
     parser.add_argument("-u", "--update", action="store_true", help="Update existing tools")
+    parser.add_argument("-s", "--smart", action="store_true", help="Smart mode: skip installed, update outdated")
     parser.add_argument("-a", "--all", action="store_true", help="Install/Update ALL tools")
     parser.add_argument("-l", "--list", action="store_true", help="List available tools")
     

@@ -52,7 +52,58 @@ class ReconRangerInstaller:
             return (False, str(e))
 
     def _is_installed(self, binary: str) -> bool:
-        return shutil.which(binary) is not None
+        """Check if binary exists in PATH or common locations"""
+        if shutil.which(binary):
+            return True
+        # Check common locations
+        for path in [self.gobin / binary, self.bin_dir / binary, Path.home() / ".local" / "bin" / binary]:
+            if path.exists():
+                return True
+        return False
+
+    def _get_version(self, binary: str) -> str:
+        """Get installed version of a tool"""
+        # Find the binary path
+        binary_path = shutil.which(binary)
+        if not binary_path:
+            for path in [self.gobin / binary, self.bin_dir / binary, Path.home() / ".local" / "bin" / binary]:
+                if path.exists():
+                    binary_path = str(path)
+                    break
+        if not binary_path:
+            return None
+        
+        # Try common version flags
+        version_flags = ['--version', '-version', '-V', '-v']
+        for flag in version_flags:
+            try:
+                result = subprocess.run([binary_path, flag], capture_output=True, text=True, timeout=5)
+                if result.returncode == 0:
+                    output = result.stdout or result.stderr
+                    # Extract version number using regex
+                    version_match = re.search(r'(\d+\.\d+(?:\.\d+)?)', output)
+                    if version_match:
+                        return version_match.group(1)
+            except:
+                continue
+        return None
+
+    def _needs_update(self, name: str, cfg: dict) -> bool:
+        """Check if tool needs update - for now always update if installed via go/pip/git"""
+        ttype = cfg.get("type")
+        if ttype == "go":
+            # Go tools installed via @latest always get latest
+            return True
+        elif ttype == "python":
+            # Python tools - pip will handle updates
+            return True
+        elif ttype == "git":
+            # Git tools - pull will get latest
+            return True
+        elif ttype == "apt":
+            # APT tools - let apt decide
+            return True
+        return False
 
     def install_go(self, name: str, cfg: dict) -> bool:
         """Install Go tool via apt or go install"""
@@ -61,26 +112,59 @@ class ReconRangerInstaller:
             ok, _ = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=180)
             if ok and self._is_installed(binary):
                 return True
+        # Ensure go bin directory exists
+        self.gobin.mkdir(parents=True, exist_ok=True)
+        # Run go install with proper env
         ok, err = self._run(["go", "install", "-v", f"{cfg['package']}@latest"], timeout=180)
         if ok:
             src = self.gobin / binary
             if src.exists():
                 dst = self.bin_dir / binary
+                # Copy instead of symlink for reliability
                 if dst.exists():
                     dst.unlink()
-                dst.symlink_to(src)
+                shutil.copy2(src, dst)
+                dst.chmod(0o755)
                 return self._is_installed(binary)
+            else:
+                # Binary might be in GOPATH/bin directly
+                for alt_src in [Path.home() / "go" / "bin" / binary, Path("/root/go/bin") / binary]:
+                    if alt_src.exists():
+                        dst = self.bin_dir / binary
+                        if dst.exists():
+                            dst.unlink()
+                        shutil.copy2(alt_src, dst)
+                        dst.chmod(0o755)
+                        return self._is_installed(binary)
         return False
 
     def install_python(self, name: str, cfg: dict) -> bool:
         """Install Python tool via pip"""
         py = sys.executable
         pkg = cfg["package"]
+        binary = cfg["binary"]
         flags = ["install", "-q", "--no-cache-dir"]
         if sys.version_info >= (3, 11):
             flags.insert(1, "--break-system-packages")
         ok, _ = self._run([py, "-m", "pip"] + flags + [pkg], timeout=120)
-        return ok
+        if ok:
+            # Check if binary is now available
+            if self._is_installed(binary):
+                return True
+            # Try to find and link the module as executable
+            try:
+                result = subprocess.run([py, "-c", f"import {binary}; print({binary}.__file__)"], 
+                                      capture_output=True, text=True)
+                if result.returncode == 0:
+                    module_path = Path(result.stdout.strip())
+                    # Create a launcher script
+                    launcher = self.bin_dir / binary
+                    launcher.write_text(f"#!/usr/bin/env python3\nimport sys\nimport {binary}\nif hasattr({binary}, 'main'):\n    {binary}.main()\nelse:\n    print('Module {binary} has no main function')\n")
+                    launcher.chmod(0o755)
+                    return True
+            except:
+                pass
+        return ok and self._is_installed(binary)
 
     def install_apt(self, name: str, cfg: dict) -> bool:
         """Install via apt"""
@@ -110,40 +194,62 @@ class ReconRangerInstaller:
         if "post_clone" in cfg:
             self._run(cfg["post_clone"].split(), cwd=path, timeout=120)
         if "build_cmd" in cfg:
-            self._run(cfg["build_cmd"].split(), cwd=path, timeout=120)
+            # Use Go environment for build commands
+            build_env = {**os.environ, "GOBIN": str(self.gobin), "GOPATH": str(Path.home() / "go")}
+            subprocess.run(cfg["build_cmd"].split(), cwd=path, timeout=120, env=build_env)
         launcher = self.bin_dir / binary
         if "entrypoint" in cfg:
             launcher.write_text(f"#!/bin/bash\nexec {sys.executable} {cfg['entrypoint']} \"\$@\"\n")
         elif (path / binary).exists():
             if launcher.exists():
                 launcher.unlink()
-            launcher.symlink_to(path / binary)
+            # Copy instead of symlink for reliability
+            shutil.copy2(path / binary, launcher)
         else:
             for f in path.rglob(binary):
                 if launcher.exists():
                     launcher.unlink()
-                launcher.symlink_to(f)
+                shutil.copy2(f, launcher)
                 break
         launcher.chmod(0o755)
         return self._is_installed(binary)
 
-    def install_one(self, name: str, update=False) -> bool:
-        """Install single tool"""
+    def install_one(self, name: str, update=False, smart=False) -> str:
+        """Install single tool, returns status: 'installed', 'updated', 'skipped', 'failed'"""
         cfg = self.tools[name]
         ttype = cfg["type"]
-        if not update and self._is_installed(cfg["binary"]):
-            return True
+        binary = cfg["binary"]
+        
+        is_installed = self._is_installed(binary)
+        
+        # Smart mode: skip if installed and no update needed
+        if smart and is_installed and not update:
+            if not self._needs_update(name, cfg):
+                return 'skipped'
+        
+        # Normal mode: skip if already installed and not forcing update
+        if not update and not smart and is_installed:
+            return 'skipped'
+        
+        # Determine if this is an update or fresh install
+        is_update = is_installed and (update or smart)
+        
         methods = {
             "go": self.install_go,
             "python": self.install_python,
             "apt": self.install_apt,
             "git": self.install_git,
         }
+        
         result = methods.get(ttype, lambda n, c: False)(name, cfg)
+        
         if result and "post_install" in cfg:
             self._run(cfg["post_install"].split(), timeout=120)
-        self.results[name] = result
-        return result
+        
+        if result:
+            return 'updated' if is_update else 'installed'
+        else:
+            return 'failed'
 
     def run(self, args):
         """Main install flow with progress bar"""
@@ -186,18 +292,40 @@ class ReconRangerInstaller:
         
         print(f"\n{Colors.BLUE}Installing {len(targets)} tools...{Colors.RESET}\n")
         
+        # Track results by status
+        installed = []
+        updated = []
+        skipped = []
+        failed = []
+        
         with tqdm(total=len(targets), desc="Progress") as pbar:
             for name in targets:
-                ok = self.install_one(name, args.update)
-                icon = "✓" if ok else "✗"
-                color = Colors.GREEN if ok else Colors.RED
+                status = self.install_one(name, args.update, args.smart)
+                
+                if status == 'installed':
+                    icon, color = "✓", Colors.GREEN
+                    installed.append(name)
+                elif status == 'updated':
+                    icon, color = "↻", Colors.YELLOW
+                    updated.append(name)
+                elif status == 'skipped':
+                    icon, color = "⊘", Colors.CYAN
+                    skipped.append(name)
+                else:  # failed
+                    icon, color = "✗", Colors.RED
+                    failed.append(name)
+                
                 print(f"{color}{icon}{Colors.RESET} {name:18}")
                 pbar.update(1)
         
-        ok = [n for n, r in self.results.items() if r]
-        fail = [n for n, r in self.results.items() if not r]
+        # Summary
+        total = len(targets)
+        print(f"\n{Colors.GREEN}✓ Installed: {len(installed)}{Colors.RESET}")
+        if updated:
+            print(f"{Colors.YELLOW}↻ Updated: {len(updated)}{Colors.RESET}")
+        if skipped:
+            print(f"{Colors.CYAN}⊘ Skipped (already installed): {len(skipped)}{Colors.RESET}")
+        if failed:
+            print(f"{Colors.RED}✗ Failed: {', '.join(failed)}{Colors.RESET}")
         
-        print(f"\n{Colors.GREEN}{len(ok)}/{len(targets)} installed{Colors.RESET}")
-        if fail:
-            print(f"{Colors.RED}Failed: {', '.join(fail)}{Colors.RESET}")
         print(f"\n{Colors.CYAN}Next: python3 ApiKeyMaster.py --configure{Colors.RESET}")
