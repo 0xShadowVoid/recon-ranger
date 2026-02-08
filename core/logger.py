@@ -3,19 +3,19 @@ import logging
 import os
 from pathlib import Path
 
-MAIN_LOG = "/var/log/reconranger.log"
-ERROR_LOG = "/var/log/reconranger_errors.log"
+# Use local logs directory instead of /var/log
+LOG_DIR = Path(__file__).parent.parent / "logs"
+MAIN_LOG = LOG_DIR / "reconranger.log"
+ERROR_LOG = LOG_DIR / "reconranger_errors.log"
 
 def setup_logging():
     """Initialize secure logging"""
     # Ensure log directories exist with proper permissions
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    
     for log_path in [MAIN_LOG, ERROR_LOG]:
-        log_dir = Path(log_path).parent
-        log_dir.mkdir(parents=True, exist_ok=True)
-        os.chmod(log_dir, 0o755)
-        
-        if not Path(log_path).exists():
-            Path(log_path).touch()
+        if not log_path.exists():
+            log_path.touch()
             os.chmod(log_path, 0o644)
     
     # Main logger
