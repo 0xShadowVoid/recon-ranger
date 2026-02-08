@@ -52,10 +52,19 @@ class SystemChecker:
     def check_go_version(self) -> str:
         """Validate Go version with proper error handling"""
         try:
-            # Use shell=True to properly resolve PATH in all environments (including sudo)
-            result = subprocess.run("go version", shell=True, capture_output=True, text=True, timeout=10)
+            # First try to find go in common locations
+            go_cmd = None
+            for path in ["/usr/local/go/bin/go", "/usr/local/bin/go", "/usr/bin/go", shutil.which("go")]:
+                if path and Path(path).exists():
+                    go_cmd = path
+                    break
             
-            # Debug output
+            if not go_cmd:
+                raise RuntimeError("Go not found in common locations: /usr/local/go/bin/go, /usr/local/bin/go, /usr/bin/go")
+            
+            # Run go version with full path
+            result = subprocess.run([go_cmd, "version"], capture_output=True, text=True, timeout=10)
+            
             if result.returncode != 0:
                 error_msg = result.stderr or result.stdout or "Unknown error"
                 raise RuntimeError(f"Go command failed: {error_msg}")
