@@ -224,30 +224,29 @@ class ReconRangerInstaller:
         flags = ["install", "-q", "--no-cache-dir"]
         if sys.version_info >= (3, 11):
             flags.insert(1, "--break-system-packages")
-        ok, _ = self._run([py, "-m", "pip"] + flags + [pkg], timeout=120)
-        if ok:
-            # Check if binary is now available
-            if self._is_installed(binary):
+        print(f"    Installing {pkg} via pip...", end="", flush=True)
+        ok, err = self._run([py, "-m", "pip"] + flags + [pkg], timeout=120)
+        if not ok:
+            print(f"\r    {name} pip failed: {err[:100]}")
+            error_logger.error(f"pip install failed for {name}: {err}")
+            return False
+        if self._is_installed(binary):
+            print(f"\r    {name} installed ")
+            return True
+        # Try to create launcher
+        try:
+            result = subprocess.run([py, "-c", f"import {binary}; print({binary}.__file__)"], 
+                                  capture_output=True, text=True)
+            if result.returncode == 0:
+                launcher = self.bin_dir / binary
+                launcher.write_text(f"#!/usr/bin/env python3\nimport sys\nimport {binary}\nif hasattr({binary}, 'main'):\n    {binary}.main()\nelse:\n    print('Module {binary} has no main function')\n")
+                launcher.chmod(0o755)
+                print(f"\r    {name} launcher created ")
                 return True
-            # Try to find and link the module as executable
-            try:
-                result = subprocess.run([py, "-c", f"import {binary}; print({binary}.__file__)"], 
-                                      capture_output=True, text=True)
-                if result.returncode == 0:
-                    module_path = Path(result.stdout.strip())
-                    # Create a launcher script
-                    launcher = self.bin_dir / binary
-                    launcher.write_text(f"#!/usr/bin/env python3\nimport sys\nimport {binary}\nif hasattr({binary}, 'main'):\n    {binary}.main()\nelse:\n    print('Module {binary} has no main function')\n")
-                    launcher.chmod(0o755)
-                    return True
-            except:
-                pass
-        return ok and self._is_installed(binary)
-
-    def install_apt(self, name: str, cfg: dict) -> bool:
-        """Install via apt"""
-        ok, _ = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=180)
-        return ok and self._is_installed(cfg["binary"])
+        except Exception as e:
+            error_logger.error(f"Failed to create launcher for {name}: {e}")
+        print(f"\r    {name} not found after install")
+        return False
 
     def install_git(self, name: str, cfg: dict) -> bool:
         """Install from git repo"""
@@ -262,6 +261,7 @@ class ReconRangerInstaller:
             "GOPATH": str(self.user_home / "go"),
         }
         
+        print(f"    Cloning {name}...", end="", flush=True)
         if path.exists():
             subprocess.run(["git", "-C", str(path), "pull", "--quiet"], 
                         timeout=60, env=env, capture_output=True)
@@ -269,8 +269,11 @@ class ReconRangerInstaller:
             result = subprocess.run(["git", "clone", "--depth", "1", cfg["repo"], str(path)], 
                                    timeout=180, env=env, capture_output=True, text=True)
             if result.returncode != 0:
+                print(f"\r    {name} clone failed: {result.stderr[:100]}")
                 error_logger.error(f"Failed to clone {name}: {result.stderr}")
                 return False
+        print(f"\r    {name} cloned ")
+        
         if "requirements" in cfg:
             py = sys.executable
             flags = ["install", "-q"]
@@ -285,8 +288,14 @@ class ReconRangerInstaller:
             self._run(cfg["post_clone"].split(), cwd=path, timeout=120)
         if "build_cmd" in cfg:
             # Use _run method to get proper Go path and environment
+            print(f"    Building {name}...", end="", flush=True)
             build_cmd = cfg["build_cmd"].split()
-            self._run(build_cmd, cwd=path, timeout=120)
+            ok, err = self._run(build_cmd, cwd=path, timeout=120)
+            if not ok:
+                print(f"\r    {name} build failed: {err[:100]}")
+                error_logger.error(f"Build failed for {name}: {err}")
+                return False
+            print(f"\r    {name} built ")
         
         launcher = self.bin_dir / binary
         launcher_created = False
@@ -301,6 +310,7 @@ class ReconRangerInstaller:
             shutil.copy2(path / binary, launcher)
             launcher_created = True
         else:
+            # Search for binary in the repo
             for f in path.rglob(binary):
                 if launcher.exists():
                     launcher.unlink()
@@ -310,8 +320,10 @@ class ReconRangerInstaller:
         
         if launcher_created:
             launcher.chmod(0o755)
+            print(f"    {name} installed ")
         else:
-            error_logger.error(f"Could not create launcher for {name}")
+            print(f"    {name}: binary not found in {path}")
+            error_logger.error(f"Could not create launcher for {name}, binary not found in {path}")
             return False
             
         return self._is_installed(binary)
