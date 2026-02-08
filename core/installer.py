@@ -272,9 +272,9 @@ class ReconRangerInstaller:
         if "post_clone" in cfg:
             self._run(cfg["post_clone"].split(), cwd=path, timeout=120)
         if "build_cmd" in cfg:
-            # Use Go environment for build commands
-            build_env = {**os.environ, "GOBIN": str(self.gobin), "GOPATH": str(Path.home() / "go")}
-            subprocess.run(cfg["build_cmd"].split(), cwd=path, timeout=120, env=build_env)
+            # Use _run method to get proper Go path and environment
+            build_cmd = cfg["build_cmd"].split()
+            self._run(build_cmd, cwd=path, timeout=120)
         launcher = self.bin_dir / binary
         if "entrypoint" in cfg:
             launcher.write_text(f"#!/bin/bash\nexec {sys.executable} {cfg['entrypoint']} \"\$@\"\n")
