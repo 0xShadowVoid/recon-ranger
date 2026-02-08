@@ -37,7 +37,14 @@ class Colors:
 class ReconRangerInstaller:
     def __init__(self, tools: Dict):
         self.tools = tools
-        self.gobin = Path.home() / "go" / "bin"
+        # Use actual user's home directory even when running with sudo
+        actual_home = os.environ.get('SUDO_USER')
+        if actual_home:
+            self.user_home = Path(f"/home/{actual_home}")
+        else:
+            self.user_home = Path.home()
+        
+        self.gobin = self.user_home / "go" / "bin"
         self.bin_dir = Path("/usr/local/bin")
         self.system = SystemChecker()
         self.results = {}
@@ -59,7 +66,7 @@ class ReconRangerInstaller:
             env = {
                 **os.environ, 
                 "GOBIN": str(self.gobin), 
-                "GOPATH": str(Path.home() / "go"),
+                "GOPATH": str(self.user_home / "go"),
                 "GOPROXY": "https://proxy.golang.org,direct",
                 "GOSUMDB": "sum.golang.org",
                 "CGO_ENABLED": "0"
