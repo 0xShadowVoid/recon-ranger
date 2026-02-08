@@ -54,8 +54,11 @@ class SystemChecker:
         try:
             # Use shell=True to properly resolve PATH in all environments (including sudo)
             result = subprocess.run("go version", shell=True, capture_output=True, text=True, timeout=10)
+            
+            # Debug output
             if result.returncode != 0:
-                raise RuntimeError("Go command failed")
+                error_msg = result.stderr or result.stdout or "Unknown error"
+                raise RuntimeError(f"Go command failed: {error_msg}")
             
             import re
             match = re.search(r'go(\d+\.\d+\.?\d*)', result.stdout)
