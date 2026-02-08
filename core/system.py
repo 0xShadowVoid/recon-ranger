@@ -52,7 +52,8 @@ class SystemChecker:
     def check_go_version(self) -> str:
         """Validate Go version with proper error handling"""
         try:
-            result = subprocess.run(["go", "version"], capture_output=True, text=True, timeout=10)
+            # Use shell=True to properly resolve PATH in all environments (including sudo)
+            result = subprocess.run("go version", shell=True, capture_output=True, text=True, timeout=10)
             if result.returncode != 0:
                 raise RuntimeError("Go command failed")
             
@@ -67,10 +68,8 @@ class SystemChecker:
                 raise RuntimeError(f"Go 1.19+ required (found {version})")
             
             return version
-        except FileNotFoundError:
-            raise RuntimeError("Go is not installed or not in PATH. Please install Go 1.19+ from https://golang.org/dl/")
         except Exception as e:
-            raise RuntimeError(f"Go version check failed: {e}")
+            raise RuntimeError(f"Go is not installed or not in PATH. Please install Go 1.19+ from https://golang.org/dl/\nDetails: {e}")
     
     def check_disk_space(self, min_gb: float = 3.0) -> None:
         """Validate disk space availability"""
