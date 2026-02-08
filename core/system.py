@@ -52,10 +52,6 @@ class SystemChecker:
     def check_go_version(self) -> str:
         """Validate Go version with proper error handling"""
         try:
-            # First check if Go is installed in PATH
-            if not shutil.which("go"):
-                raise RuntimeError("Go is not installed or not in PATH. Please install Go 1.19+ from https://golang.org/dl/")
-            
             result = subprocess.run(["go", "version"], capture_output=True, text=True, timeout=10)
             if result.returncode != 0:
                 raise RuntimeError("Go command failed")
