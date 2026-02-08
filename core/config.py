@@ -58,6 +58,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "package": "github.com/projectdiscovery/katana/cmd/katana",
         "binary": "katana",
         "apt": "katana",
+        "go_version": "1.24.1",
         "description": "Next-gen crawling and spidering framework",
         "example": "katana -u https://target.com -silent -depth 3 -js-crawl",
     },
