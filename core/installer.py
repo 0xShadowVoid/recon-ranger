@@ -253,11 +253,23 @@ class ReconRangerInstaller:
         """Install from git repo"""
         path = Path(cfg["path"])
         binary = cfg["binary"]
+        
+        # Prevent git from prompting for credentials
+        env = {
+            **os.environ,
+            "GIT_TERMINAL_PROMPT": "0",
+            "GOBIN": str(self.gobin),
+            "GOPATH": str(self.user_home / "go"),
+        }
+        
         if path.exists():
-            self._run(["git", "-C", str(path), "pull", "--quiet"], timeout=60)
+            subprocess.run(["git", "-C", str(path), "pull", "--quiet"], 
+                        timeout=60, env=env, capture_output=True)
         else:
-            ok, _ = self._run(["git", "clone", "--depth", "1", "--quiet", cfg["repo"], str(path)], timeout=180)
-            if not ok:
+            result = subprocess.run(["git", "clone", "--depth", "1", cfg["repo"], str(path)], 
+                                   timeout=180, env=env, capture_output=True, text=True)
+            if result.returncode != 0:
+                error_logger.error(f"Failed to clone {name}: {result.stderr}")
                 return False
         if "requirements" in cfg:
             py = sys.executable
@@ -275,21 +287,33 @@ class ReconRangerInstaller:
             # Use _run method to get proper Go path and environment
             build_cmd = cfg["build_cmd"].split()
             self._run(build_cmd, cwd=path, timeout=120)
+        
         launcher = self.bin_dir / binary
+        launcher_created = False
+        
         if "entrypoint" in cfg:
             launcher.write_text(f"#!/bin/bash\nexec {sys.executable} {cfg['entrypoint']} \"\$@\"\n")
+            launcher_created = True
         elif (path / binary).exists():
             if launcher.exists():
                 launcher.unlink()
             # Copy instead of symlink for reliability
             shutil.copy2(path / binary, launcher)
+            launcher_created = True
         else:
             for f in path.rglob(binary):
                 if launcher.exists():
                     launcher.unlink()
                 shutil.copy2(f, launcher)
+                launcher_created = True
                 break
-        launcher.chmod(0o755)
+        
+        if launcher_created:
+            launcher.chmod(0o755)
+        else:
+            error_logger.error(f"Could not create launcher for {name}")
+            return False
+            
         return self._is_installed(binary)
 
     def install_one(self, name: str, update=False, smart=False) -> str:
