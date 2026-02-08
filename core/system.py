@@ -52,9 +52,13 @@ class SystemChecker:
     def check_go_version(self) -> str:
         """Validate Go version with proper error handling"""
         try:
+            # First check if Go is installed in PATH
+            if not shutil.which("go"):
+                raise RuntimeError("Go is not installed or not in PATH. Please install Go 1.19+ from https://golang.org/dl/")
+            
             result = subprocess.run(["go", "version"], capture_output=True, text=True, timeout=10)
             if result.returncode != 0:
-                raise RuntimeError("Go not installed")
+                raise RuntimeError("Go command failed")
             
             import re
             match = re.search(r'go(\d+\.\d+\.?\d*)', result.stdout)
@@ -67,6 +71,8 @@ class SystemChecker:
                 raise RuntimeError(f"Go 1.19+ required (found {version})")
             
             return version
+        except FileNotFoundError:
+            raise RuntimeError("Go is not installed or not in PATH. Please install Go 1.19+ from https://golang.org/dl/")
         except Exception as e:
             raise RuntimeError(f"Go version check failed: {e}")
     
