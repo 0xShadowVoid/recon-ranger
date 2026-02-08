@@ -42,9 +42,20 @@ class ReconRangerInstaller:
         self.system = SystemChecker()
         self.results = {}
 
+    def _find_go(self) -> str:
+        """Find Go binary in common locations"""
+        for path in ["/usr/local/go/bin/go", "/usr/local/bin/go", "/usr/bin/go", shutil.which("go")]:
+            if path and Path(path).exists():
+                return path
+        return "go"  # Fallback to PATH
+
     def _run(self, cmd: list, cwd=None, timeout=300) -> Tuple[bool, str]:
         """Execute command, return (success, output)"""
         try:
+            # Replace 'go' with full path if it's the first argument
+            if cmd and cmd[0] == "go":
+                cmd[0] = self._find_go()
+            
             env = {
                 **os.environ, 
                 "GOBIN": str(self.gobin), 
