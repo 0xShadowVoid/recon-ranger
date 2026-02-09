@@ -18,3 +18,10 @@ __pycache__/
 *.tmp
 *.swp
 *~
+
+# v2.0 additions
+automation/
+scripts/
+self-settings/
+personal/
+notes/

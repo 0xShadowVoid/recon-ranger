@@ -4,6 +4,7 @@ import sys
 import argparse
 from core.installer import ReconRangerInstaller
 from core.config import TOOL_DEFINITIONS, CATEGORIES
+from pathlib import Path
 
 def main():
     parser = argparse.ArgumentParser(
@@ -11,13 +12,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  sudo python reconranger.py -c core              # Install 13 core tools
-  sudo python reconranger.py -c js osint          # Install core + JS + OSINT
-  sudo python reconranger.py 2 5 7                 # Install tools by number
-  sudo python reconranger.py 1-5 --skip 4         # Install range 1-5 skipping #4
-  sudo python reconranger.py -t subfinder amass    # Install specific tools by name
-  python reconranger.py --list                    # List all tools with numbers
-  python reconranger.py --categories              # Show categories
+  python3 reconranger.py -c core              # Install 13 core tools
+  python3 reconranger.py -c js osint          # Install core + JS + OSINT
+  python3 reconranger.py 2 5 7                 # Install tools by number
+  python3 reconranger.py 1-5 --skip 4         # Install range 1-5 skipping #4
+  python3 reconranger.py -t subfinder amass    # Install specific tools by name
+  python3 reconranger.py --list                    # List all tools with numbers
+  python3 reconranger.py --categories              # Show categories
         """
     )
     
@@ -49,99 +50,79 @@ Examples:
                 print(f"  • {cat:15s} ({len(tools)} tools) ⭐ Surgical Core Set")
             else:
                 print(f"  • {cat:15s} ({len(tools)} tools)")
-        print(f"\n📖 Full tool list: python reconranger.py --list")
-        print("💡 Use: python reconranger.py -c <category>")
-        print("⭐ Tip: Use 'core' for the 13 essential tools covering 95% of recon workflows")
         return
     
     if args.list:
         print(f"\n🛠️ Available Tools ({len(TOOL_DEFINITIONS)} total):")
-        print(f"{'#':3s} {'Tool':20s} {'Description':40s}")
-        print("-" * 70)
-        for i, (tool, cfg) in enumerate(sorted(TOOL_DEFINITIONS.items()), 1):
-            desc = cfg['description'][:37] + "..." if len(cfg['description']) > 40 else cfg['description']
-            print(f"{i:3d} {tool:20s} {desc:40s}")
-        print(f"\n📊 Total: {len(TOOL_DEFINITIONS)} tools")
-        print("📖 Full documentation: TOOLS.md")
+        for i, (name, cfg) in enumerate(TOOL_DEFINITIONS.items(), 1):
+            binary_path = Path("/usr/local/bin") / cfg["binary"]
+            status = "✓" if binary_path.exists() else " "
+            print(f"  {i:2}. {name:20} {cfg['description'][:40]} {status}")
         return
     
     if args.links:
-        print("\n🔗 Tool Repository Links:")
-        for tool, cfg in sorted(TOOL_DEFINITIONS.items()):
-            repo = cfg.get('repo', f'https://github.com/projectdiscovery/{tool}')
-            print(f"  • {tool:20s}: {repo}")
+        print(f"\n🔗 Tool Repository Links:")
+        for name, cfg in TOOL_DEFINITIONS.items():
+            if cfg.get("repo"):
+                print(f"  {name:20} {cfg['repo']}")
         return
     
     if args.check:
-        installer = ReconRangerInstaller(TOOL_DEFINITIONS)
-        print("\n� Checking Installation Status:")
-        print(f"{'Tool':20s} {'Status':10s} {'Path':50s}")
-        print("-" * 85)
-        
-        installed_count = 0
-        for tool, cfg in sorted(TOOL_DEFINITIONS.items()):
-            binary = cfg.get('binary', tool)
-            if installer._is_installed(binary):
-                status = "✓ Installed"
-                path = installer._find_binary_path(binary)
-                installed_count += 1
+        print(f"\n🔍 Installation Status Check:")
+        installed = []
+        missing = []
+        for name, cfg in TOOL_DEFINITIONS.items():
+            binary = cfg["binary"]
+            binary_path = Path("/usr/local/bin") / binary
+            if binary_path.exists():
+                installed.append(name)
             else:
-                status = "✗ Missing"
-                path = "N/A"
-            print(f"{tool:20s} {status:10s} {path:50s}")
+                missing.append(name)
         
-        print(f"\n📊 Summary: {installed_count}/{len(TOOL_DEFINITIONS)} tools installed")
+        print(f"✅ Installed: {len(installed)}/{len(TOOL_DEFINITIONS)} tools")
+        if missing:
+            print(f"❌ Missing: {', '.join(missing)}")
+        else:
+            print("🎉 All tools installed!")
         return
     
     if args.rollback:
         installer = ReconRangerInstaller(TOOL_DEFINITIONS)
-        if args.rollback in TOOL_DEFINITIONS:
-            installer.rollback_tool(args.rollback)
-        else:
-            print(f"❌ Unknown tool: {args.rollback}")
-        return
+        success = installer.rollback_tool(args.rollback)
+        sys.exit(0 if success else 1)
     
-    # Validate installation arguments
-    if not any([args.tools, args.category, args.all, args.numbers]):
-        parser.print_help()
-        print("\n❌ No installation target specified")
-        return
-    
+    # Installation commands
     installer = ReconRangerInstaller(TOOL_DEFINITIONS)
-    
-    # Handle different installation modes
-    success = False
     
     if args.category:
         success = installer.install_category(args.category)
-    elif args.numbers:
-        # Check if it's a range (X-Y) or individual numbers
-        if len(args.numbers) == 2 and len(sys.argv) > 2 and '-' in sys.argv[sys.argv.index(args.numbers[0])-1]:
-            # Range mode
+        sys.exit(0 if success else 1)
+    
+    if args.tools:
+        success = installer.install_multiple_tools(args.tools)
+        sys.exit(0 if success else 1)
+    
+    if args.numbers:
+        # Handle range vs individual numbers
+        if len(args.numbers) == 2 and args.skip is None:
+            # Likely a range (X-Y)
+            start, end = args.numbers
+            success = installer.install_range(start, end)
+        elif len(args.numbers) == 2 and args.skip is not None:
+            # Range with skip
             start, end = args.numbers
             success = installer.install_range(start, end, args.skip)
         else:
-            # Individual numbers mode
+            # Individual numbers
             success = installer.install_multiple_tools(args.numbers)
-    elif args.tools:
-        success = installer._install_tools_list(args.tools)
-    elif args.all:
-        all_tools = list(TOOL_DEFINITIONS.keys())
-        success = installer._install_tools_list(all_tools)
+        sys.exit(0 if success else 1)
     
-    if success:
-        print(f"\n{Colors.GREEN}✅ Installation completed successfully!{Colors.RESET}")
-        print(f"{Colors.CYAN}Next: Run 'python reconranger.py --check' to verify installation{Colors.RESET}")
-    else:
-        print(f"\n{Colors.RED}❌ Installation completed with errors{Colors.RESET}")
-        print(f"{Colors.YELLOW}Check logs in ~/.reconranger/logs/ for details{Colors.RESET}")
-
-class Colors:
-    GREEN = '\033[92m'; YELLOW = '\033[93m'; RED = '\033[91m'
-    BLUE = '\033[94m'; CYAN = '\033[96m'; RESET = '\033[0m'; BOLD = '\033[1m'
+    if args.all:
+        success = installer.run(args)
+        sys.exit(0 if success else 1)
+    
+    # Default: show help
+    parser.print_help()
 
 if __name__ == "__main__":
-    if sys.version_info < (3, 8):
-        print("❌ Python 3.8+ required")
-        sys.exit(1)
     main()
