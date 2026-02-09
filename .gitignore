@@ -25,3 +25,5 @@ scripts/
 self-settings/
 personal/
 notes/
+.github/
+.env/
