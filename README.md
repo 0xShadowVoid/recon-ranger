@@ -1,6 +1,6 @@
 # 🦅 ReconRanger - Universal Recon Toolkit Installer
 
-> One-command installer for 60 professional recon tools (subfinder, amass, nuclei, sqlmap, dalfox, metasploit)  
+> One-command installer for 61 professional recon tools (subfinder, amass, nuclei, sqlmap, dalfox, metasploit, jeeves)  
 > ✅ Works on Debian/Ubuntu/Kali/Parrot/Mint ✅ GPL v3 Licensed ✅ Progress bars
 
 [![Linux](https://img.shields.io/badge/Linux-Debian%20%7C%20Ubuntu%20%7C%20Kali%20%7C%20Parrot-blue?logo=linux)](https://www.debian.org)
@@ -29,105 +29,29 @@ python3 ApiKeyMaster.py --apply
 
 ---
 
-## 🛠️ Complete Toolkit (63 Tools)
+## 🛠️ Complete Toolkit (61 Tools)
 
-### 🌐 Recon & Subdomain Enumeration (7)
-- **amass** - In-depth attack surface mapping
-- **subfinder** - Fast subdomain discovery (30+ sources)
-- **assetfinder** - Certificate Transparency subdomains
-- **sublist3r** - OSINT-based subdomain enumeration
-- **subdomainizer** - Find subdomains in external resources
-- **github-subdomains** - GitHub commits/repos subdomains
-- **bbot** - Recursive internet scanner
+**📖 [View complete tool documentation → TOOLS.md](TOOLS.md)**
 
-### 📡 DNS & Network Scanning (4)
-- **dnsx** - Multi-purpose DNS toolkit
-- **shuffledns** - MassDNS wrapper for brute-forcing
-- **masscan** - High-speed port scanner
-- **naabu** - Fast port scanner for recon
-
-### 🔍 HTTP Probing & Fingerprinting (3)
-- **httpx** - HTTP probing and fingerprinting
-- **wafw00f** - WAF detection and identification
-- **graphw00f** - GraphQL security testing
-
-### 🕷️ Crawling & JavaScript Analysis (6)
-- **katana** - Next-gen web crawler
-- **gospider** - Fast web spider
-- **linkfinder** - JavaScript endpoint discovery
-- **jsfinder** - JavaScript secrets finder
-- **jsluice** - JavaScript link extractor
-- **jsleak** - JavaScript leak scanner
-
-### 🔓 Content Discovery & Fuzzing (4)
-- **ffuf** - Fast web fuzzer
-- **dirsearch** - Directory brute-forcing
-- **kiterunner** - Content discovery framework
-- **cewl** - Custom wordlist generator
-
-### 🔑 Parameter Discovery (2)
-- **arjun** - HTTP parameter discovery
-- **ParamSpider** - Parameter mining from archives
-
-### 💉 XSS Scanners (3)
-- **XSStrike** - Advanced XSS detection
-- **dalfox** - Modern XSS scanner
-- **XSpear** - XSS scanner with Selenium
-
-### 🧪 Vulnerability Scanners (2)
-- **nuclei** - Fast vulnerability scanner (10k+ templates)
-- **nikto** - Web server scanner
-
-### 💥 Exploitation Framework (1)
-- **metasploit-framework** - Complete penetration testing framework
-
-### 📦 Specialized Attack Tools
-
-#### SQL/NoSQL Injection (3)
-- **sqlmap** - Automatic SQL injection tool
-- **ghauri** - SQL injection scanner
-- **NoSQLMap** - NoSQL database injection
-
-#### GraphQL (2)
-- **GraphQLmap** - GraphQL security testing
-- **graphw00f** - GraphQL fingerprinting
-
-#### Directory Traversal (1)
-- **dotdotpwn** - Path traversal fuzzer
-
-#### Cloud Buckets (2)
-- **S3Scanner** - AWS S3 bucket scanner
-- **cloud_enum** - Multi-cloud resource enumeration
-
-#### CMS Scanners (2)
-- **wpscan** - WordPress security scanner
-- **droopescan** - CMS scanner (Drupal, Joomla, etc.)
-
-### 🌍 Subdomain Takeover (3)
-- **subjack** - Subdomain takeover detection
-- **subzy** - Fast subdomain takeover scanner
-- **SubOver** - Subdomain takeover tool
-
-### 🔎 OSINT & GitHub Hunting (5)
-- **github-dorks** - GitHub sensitive data finder
-- **githound** - GitHub secrets hunter
-- **jsecret** - JavaScript secret finder
-- **virustotalx** - VirusTotal intelligence tool
-- **metabigor** - Network intelligence tool
-
-### 🧰 Utilities & Helpers (6)
-- **waybackurls** - URL fetcher from archives
-- **gau** - GetAllUrls enumerator
-- **anew** - Append new lines to files
-- **interactsh** - Out-of-band interaction client
-- **gf** - Pattern finder for grep
-- **uro** - URL recon tool
-
-### 🤖 Automation Frameworks (4)
-- **ReconFTW** - Automated recon framework
-- **AIDOR** - IDOR automation scanner
-- **enumrust** - Rust-based enumeration tool
-- **CVINDER** - CVE identifier and finder
+### Quick Categories
+- **Recon & Subdomains** (7): amass, subfinder, assetfinder, sublist3r, subdomainizer, github-subdomains, bbot
+- **DNS & Network** (4): dnsx, shuffledns, masscan, naabu  
+- **HTTP/Fingerprinting** (3): httpx, wafw00f, graphw00f
+- **Crawling/JavaScript** (6): katana, gospider, linkfinder, jsfinder, jsluice, jsleak
+- **Content Discovery** (4): ffuf, dirsearch, kiterunner, cewl
+- **Parameter Discovery** (2): arjun, paramspider
+- **XSS Scanners** (3): xsstrike, dalfox, xspear
+- **Vulnerability Scanners** (2): nuclei, nikto
+- **Exploitation** (1): metasploit-framework
+- **SQL/NoSQL** (3): sqlmap, ghauri, nosqlmap
+- **GraphQL** (2): graphqlmap, graphw00f
+- **Directory Traversal** (1): dotdotpwn
+- **Cloud Buckets** (2): s3scanner, cloud_enum
+- **CMS Scanners** (2): wpscan, droopescan
+- **Subdomain Takeover** (3): subjack, subzy, subover
+- **OSINT/GitHub** (5): github-dorks, githound, jsecret, virustotalx, metabigor
+- **Utilities** (7): waybackurls, gau, anew, interactsh, gf, uro, seclists
+- **Automation** (5): reconftw, aidor, enumrust, cvinder, jeeves
 
 ---
 
@@ -151,9 +75,9 @@ python3 ApiKeyMaster.py --apply
 | CMS Scanners | 2 |
 | Subdomain Takeover | 3 |
 | OSINT/GitHub | 5 |
-| Utilities | 6 |
-| Automation Frameworks | 4 |
-| **TOTAL** | **60 unique tools** |
+| Utilities | 7 |
+| Automation Frameworks | 5 |
+| **TOTAL** | **61 unique tools** |
 
 ---
 
@@ -163,7 +87,7 @@ python3 ApiKeyMaster.py --apply
 |------|-------|---------|
 | `reconranger.py` | 34 | CLI entrypoint - delegates all work |
 | `core/installer.py` | 200 | Installation logic + progress bars |
-| `core/config.py` | 548 | All 60 tool definitions |
+| `core/config.py` | 560 | All 61 tool definitions |
 | `core/system.py` | 85 | System checks |
 | `core/logger.py` | 40 | Logging setup |
 
@@ -194,7 +118,7 @@ You asked why we need validation for a one-time install script. Here's why:
 
 | Command | Description |
 |---------|-------------|
-| `sudo python3 reconranger.py --all` | Install all 60 tools with progress bar |
+| `sudo python3 reconranger.py --all` | Install all 61 tools with progress bar |
 | `sudo python3 reconranger.py -t subfinder httpx` | Install specific tools |
 | `sudo python3 reconranger.py --update --all` | Update all tools |
 | `python3 reconranger.py --list` | List available tools |
@@ -212,14 +136,14 @@ Install shows real-time progress:
 Checking system...
 ✓ Python OK, Go 1.21
 
-Installing 60 tools...
-Progress: 100%|████████████████████| 60/60
+Installing 61 tools...
+Progress: 100%|████████████████████| 61/61
 ✓ amass
 ✓ subfinder
 ✓ httpx
 ...     
 
-60/60 installed
+61/61 installed
 Next: python3 ApiKeyMaster.py --configure
 ```
 

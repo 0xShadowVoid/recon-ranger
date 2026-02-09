@@ -547,6 +547,16 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "description": "Rust-based enumeration tool",
         "example": "./enumrust target.com",
     },
+    "jeeves": {
+        "type": "git",
+        "repo": "https://github.com/ferreiraklet/Jeeves.git",
+        "path": "/opt/jeeves",
+        "binary": "jeeves",
+        "entrypoint": "/opt/jeeves/jeeves.py",
+        "requirements": ["-r", "/opt/jeeves/requirements.txt"],
+        "description": "OSINT automation tool for reconnaissance",
+        "example": "python3 jeeves.py -d target.com",
+    },
 }
 
 def get_tool(name: str) -> Optional[Dict[str, Any]]:
