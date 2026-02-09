@@ -109,35 +109,37 @@ class ReconRangerInstaller:
         
     def _install_tools_list(self, tools_to_install: List[str]) -> bool:
         """Internal method to install a list of tools"""
-        success_count = 0
-        failed_tools = []
+        success_list = []
+        failed_list = []
         
         with tqdm(total=len(tools_to_install), desc="Installing tools", unit="tool") as pbar:
             for tool_name in tools_to_install:
                 if tool_name not in self.tools:
                     print(f"{Colors.YELLOW}⚠️ Tool '{tool_name}' not found in configuration{Colors.RESET}")
-                    failed_tools.append(tool_name)
+                    failed_list.append(tool_name)
                     pbar.update(1)
                     continue
                     
                 # Backup existing binary if it exists
                 self._backup_tool(tool_name)
                 
-                if self._install_single_tool(tool_name):
-                    success_count += 1
+                # Install using install_one method
+                status = self.install_one(tool_name, update=False, smart=False)
+                if status in ['installed', 'updated']:
+                    success_list.append(tool_name)
                     self.results[tool_name] = True
                 else:
-                    failed_tools.append(tool_name)
+                    failed_list.append(tool_name)
                     self.results[tool_name] = False
                     
                 pbar.update(1)
                 
         # Summary
-        print(f"\n{Colors.GREEN}✅ Successfully installed: {success_count}/{len(tools_to_install)}{Colors.RESET}")
-        if failed_tools:
-            print(f"{Colors.RED}❌ Failed: {', '.join(failed_tools)}{Colors.RESET}")
+        print(f"\n{Colors.GREEN}✅ Successfully installed: {', '.join(success_list) if success_list else 'None'}{Colors.RESET}")
+        if failed_list:
+            print(f"{Colors.RED}❌ Failed: {', '.join(failed_list)}{Colors.RESET}")
             
-        return success_count == len(tools_to_install)
+        return len(failed_list) == 0
         
     def _backup_tool(self, tool_name: str):
         """Create timestamped backup before installation"""

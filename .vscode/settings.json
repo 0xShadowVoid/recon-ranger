@@ -3,6 +3,7 @@
         "/^python reconranger\\.py -c core --help$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "git add": true
     }
 }

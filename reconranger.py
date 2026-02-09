@@ -99,7 +99,19 @@ Examples:
     installer = ReconRangerInstaller(TOOL_DEFINITIONS)
     
     if args.category:
-        success = installer.install_category(args.category)
+        # Support multiple categories: -c core js osint
+        from core.config import CATEGORIES
+        categories = [args.category] if isinstance(args.category, str) else args.category.split()
+        for cat in categories:
+            if cat not in CATEGORIES:
+                print(f"❌ Unknown category: {cat}")
+                print(f"Available categories: {', '.join(CATEGORIES.keys())}")
+                sys.exit(1)
+        # Install all unique tools from selected categories
+        all_tools = set()
+        for cat in categories:
+            all_tools.update(CATEGORIES[cat])
+        success = installer._install_tools_list(list(all_tools))
         sys.exit(0 if success else 1)
     
     if args.tools:
