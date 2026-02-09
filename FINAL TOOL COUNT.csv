@@ -1,0 +1,20 @@
+﻿Category,Tools
+Recon & Subdomains,7
+DNS & Network,4
+HTTP/Fingerprinting,3
+Crawling/JS Analysis,6
+Content Discovery,4
+Parameter Discovery,2
+XSS Scanners,3
+Vulnerability Scanners,2
+Exploitation Framework,1 (Metasploit)
+SQL/NoSQL Injection,3
+GraphQL,2
+Directory Traversal,1
+Cloud Buckets,2
+CMS Scanners,2
+Subdomain Takeover,3
+OSINT/GitHub,5
+Utilities,6
+Automation Frameworks,4
+TOTAL,60 unique tools
