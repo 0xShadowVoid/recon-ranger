@@ -248,6 +248,11 @@ class ReconRangerInstaller:
         print(f"\r    {name} not found after install")
         return False
 
+    def install_apt(self, name: str, cfg: dict) -> bool:
+        """Install via apt"""
+        ok, _ = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=180)
+        return ok and self._is_installed(cfg["binary"])
+
     def install_git(self, name: str, cfg: dict) -> bool:
         """Install from git repo"""
         path = Path(cfg["path"])
