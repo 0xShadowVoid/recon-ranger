@@ -245,90 +245,18 @@ class ReconRangerInstaller:
                 return True
         return False
 
-    def _check_go_version_requirement(self, cfg: dict) -> Tuple[bool, str]:
-        """Check if current Go version meets tool requirements"""
-        required = cfg.get("go_version")
-        if not required:
-            return True, ""
-        
-        # Get current Go version
-        ok, output = self._run(["go", "version"], timeout=10)
-        if not ok:
-            return False, "Cannot determine Go version"
-        
-        # Parse version like "go version go1.23.5 linux/amd64"
-        match = re.search(r'go(\d+\.\d+(?:\.\d+)?)', output)
-        if not match:
-            return False, "Cannot parse Go version"
-        
-        current = match.group(1)
-        
-        # Compare versions
-        def parse_version(v):
-            return tuple(map(int, v.split('.')))
-        
+    def _install_single_tool(self, tool_name: str) -> bool:
+        """Install a single tool using the existing install_one method"""
         try:
-            if parse_version(current) < parse_version(required):
-                return False, f"Go {required}+ required, found {current}"
-        except:
-            pass
-        
-        return True, ""
-
-    def _get_version(self, binary: str) -> str:
-        """Get installed version of a tool"""
-        # Find the binary path
-        binary_path = shutil.which(binary)
-        if not binary_path:
-            for path in [self.gobin / binary, self.bin_dir / binary, Path.home() / ".local" / "bin" / binary]:
-                if path.exists():
-                    binary_path = str(path)
-                    break
-        if not binary_path:
-            return None
-        
-        # Try common version flags
-        version_flags = ['--version', '-version', '-V', '-v']
-        for flag in version_flags:
-            try:
-                result = subprocess.run([binary_path, flag], capture_output=True, text=True, timeout=5)
-                if result.returncode == 0:
-                    output = result.stdout or result.stderr
-                    # Extract version number using regex
-                    version_match = re.search(r'(\d+\.\d+(?:\.\d+)?)', output)
-                    if version_match:
-                        return version_match.group(1)
-            except:
-                continue
-        return None
-
-    def _needs_update(self, name: str, cfg: dict) -> bool:
-        """Check if tool needs update - for now always update if installed via go/pip/git"""
-        ttype = cfg.get("type")
-        if ttype == "go":
-            # Go tools installed via @latest always get latest
-            return True
-        elif ttype == "python":
-            # Python tools - pip will handle updates
-            return True
-        elif ttype == "git":
-            # Git tools - pull will get latest
-            return True
-        elif ttype == "apt":
-            # APT tools - let apt decide
-            return True
-        return False
+            status = self.install_one(tool_name, update=False, smart=False)
+            return status in ['installed', 'updated']
+        except Exception as e:
+            error_logger.error(f"Failed to install {tool_name}: {e}")
+            return False
 
     def install_go(self, name: str, cfg: dict) -> bool:
         """Install Go tool via apt or go install"""
         binary = cfg["binary"]
-        
-        # Check Go version requirement first
-        ok, msg = self._check_go_version_requirement(cfg)
-        if not ok:
-            error_logger.error(f"Skipping {name}: {msg}")
-            print(f"\r    {name} skipped: {msg}")
-            return False
         
         # Try apt only if available and quick
         if cfg.get("apt"):
@@ -488,6 +416,47 @@ class ReconRangerInstaller:
             
         return self._is_installed(binary)
 
+    def install_ruby(self, name: str, cfg: dict) -> bool:
+        """Install Ruby gem"""
+        gem = cfg["package"]
+        binary = cfg["binary"]
+        print(f"    Installing {gem} via gem...", end="", flush=True)
+        ok, err = self._run(["gem", "install", gem], timeout=120)
+        if not ok:
+            print(f"\r    {name} gem failed: {err[:100]}")
+            error_logger.error(f"gem install failed for {name}: {err}")
+            return False
+        if self._is_installed(binary):
+            print(f"\r    {name} installed ")
+            return True
+        print(f"\r    {name} not found after install")
+        return False
+
+    def install_cargo(self, name: str, cfg: dict) -> bool:
+        """Install Rust crate via cargo"""
+        package = cfg.get("package", name)
+        binary = cfg["binary"]
+        print(f"    Installing {package} via cargo...", end="", flush=True)
+        ok, err = self._run(["cargo", "install", package], timeout=300)
+        if not ok:
+            print(f"\r    {name} cargo failed: {err[:100]}")
+            error_logger.error(f"cargo install failed for {name}: {err}")
+            return False
+        
+        # Check common cargo bin locations
+        cargo_bin = Path.home() / ".cargo" / "bin" / binary
+        if cargo_bin.exists():
+            # Copy to system bin
+            dst = self.bin_dir / binary
+            if dst.exists():
+                dst.unlink()
+            shutil.copy2(cargo_bin, dst)
+            dst.chmod(0o755)
+            print(f"\r    {name} installed ")
+            return True
+        print(f"\r    {name} not found after install")
+        return False
+
     def install_one(self, name: str, update=False, smart=False) -> str:
         """Install single tool, returns status: 'installed', 'updated', 'skipped', 'failed'"""
         cfg = self.tools[name]
@@ -498,8 +467,7 @@ class ReconRangerInstaller:
         
         # Smart mode: skip if installed and no update needed
         if smart and is_installed and not update:
-            if not self._needs_update(name, cfg):
-                return 'skipped'
+            return 'skipped'
         
         # Normal mode: skip if already installed and not forcing update
         if not update and not smart and is_installed:
@@ -513,6 +481,8 @@ class ReconRangerInstaller:
             "python": self.install_python,
             "apt": self.install_apt,
             "git": self.install_git,
+            "ruby": self.install_ruby,
+            "cargo": self.install_cargo,
         }
         
         result = methods.get(ttype, lambda n, c: False)(name, cfg)
@@ -540,9 +510,7 @@ class ReconRangerInstaller:
         self.system.check_disk_space()
         self.system.check_internet()
         
-        if os.geteuid() != 0:
-            print(f"{Colors.RED}✗ Run with sudo{Colors.RESET}")
-            sys.exit(1)
+        # No sudo required for v2.0 - tools install to user space
         
         if args.all:
             targets = list(self.tools.keys())
@@ -602,4 +570,4 @@ class ReconRangerInstaller:
         if failed:
             print(f"{Colors.RED}✗ Failed: {', '.join(failed)}{Colors.RESET}")
         
-        print(f"\n{Colors.CYAN}Next: python3 ApiKeyMaster.py --configure{Colors.RESET}")
+        print(f"\n{Colors.CYAN}Next: python3 reconranger.py --check{Colors.RESET}")

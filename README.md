@@ -1,15 +1,15 @@
 # 🦅 ReconRanger v2.0 - Surgical Recon Toolkit
 
 > **Python rewrite with 13-tool surgical core** - Install 13 tools, not 61. Update safely, not silently. Recon surgically, not sprawled.  
-> ✅ Parrot OS hardened ✅ Zero root required ✅ 5-minute installs ✅ Auto-rollback protection
+> ✅ Any Linux distribution ✅ Zero root required ✅ 5-minute installs ✅ Auto-rollback protection
 
-[![Linux](https://img.shields.io/badge/Linux-Parrot%20%7C%20Kali%20%7C%20Ubuntu-blue?logo=linux)](https://www.parrotsec.org)
+[![Linux](https://img.shields.io/badge/Linux-Any%20Distribution-blue?logo=linux)](https://www.linux.org)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![Version: 2.0](https://img.shields.io/badge/Version-2.0-blue.svg)](https://github.com/ShadowVoid-King/Recon-Ranger/releases)
 
 ---
 
-## ⚡ Quick Start (Parrot OS)
+## ⚡ Quick Start (Any Linux)
 
 ```bash
 # 1. Clone & bootstrap (one-time setup)
@@ -32,7 +32,7 @@ bbot -t example.com -m subfinder httpx nuclei
 
 ## 🎯 Why Surgical Core (13 tools) vs Sprawl (61 tools)?
 
-**Parrot OS Philosophy**: Security-by-default, minimal attack surface
+**Linux Philosophy**: Security-by-default, minimal attack surface
 
 | Core Toolkit (13) | Traditional Sprl (61) |
 |-------------------|---------------------|
@@ -140,13 +140,13 @@ python3 reconranger.py --list
 
 ---
 
-## 🛡️ Parrot OS Hardening Features
+## 🛡️ Linux Hardening Features
 
 - **Zero root required**: All tools install to `~/go/bin` or `~/.local/bin`
 - **System isolation**: No Python/Go environment contamination
 - **PATH persistence**: Auto-configuration survives shell restarts
 - **Disk space guards**: Clean failure on full `/tmp` without partial installs
-- **Security defaults**: Respects Parrot's hardened kernel and permissions
+- **Security defaults**: Respects Linux security defaults and permissions
 
 ---
 
@@ -228,16 +228,16 @@ assetfinder --subs-only target.com | cloud_enum -k target
 
 ---
 
-## 📈 Why This Matters for Parrot OS Users
+## 📈 Why This Matters for Linux Users
 
-Parrot OS prioritizes security-by-default and minimal attack surface. This v2.0 rewrite delivers:
+Linux prioritizes security-by-default and minimal attack surface. This v2.0 rewrite delivers:
 
 - **Surgical precision**: 13 tools covering 95% of real-world recon workflows
 - **Zero system contamination**: All tools isolated to user space
 - **Update safety**: No broken toolchains after GitHub updates
-- **Parrot-native design**: Respects hardened defaults and security philosophy
+- **Linux-native design**: Respects security defaults and philosophy
 - **Workflow efficiency**: Start recon in <5 minutes instead of wrestling with tool sprawl
 
 ---
 
-**ReconRanger v2.0 transforms from a simple tool installer into a surgical recon workflow engine - optimized specifically for Parrot OS security professionals who value precision, safety, and efficiency over tool sprawl.**
+**ReconRanger v2.0 transforms from a simple tool installer into a surgical recon workflow engine - optimized specifically for Linux security professionals who value precision, safety, and efficiency over tool sprawl.**
