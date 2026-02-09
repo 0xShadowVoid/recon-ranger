@@ -34,6 +34,7 @@ python3 ApiKeyMaster.py --apply
 **📖 [View complete tool documentation → TOOLS.md](TOOLS.md)**
 
 ### Quick Categories
+- **⭐ Core Set** (15 essential tools): `sudo python reconranger.py -c core`
 - **Recon & Subdomains** (7): amass, subfinder, assetfinder, sublist3r, subdomainizer, github-subdomains, bbot
 - **DNS & Network** (4): dnsx, shuffledns, masscan, naabu  
 - **HTTP/Fingerprinting** (3): httpx, wafw00f, graphw00f

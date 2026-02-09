@@ -4,6 +4,36 @@
 
 ---
 
+## ⭐ Top Hunters Core Set (15 Essential Tools)
+
+> **What top hunters actually use daily** - The most essential 15-tool set for efficient reconnaissance
+
+| # | Tool | Primary Use | Repository |
+|---|-------|--------------|------------|
+| 1 | **Burp Suite Pro** | Manual testing | *[Commercial Product](https://portswigger.net/burp)* |
+| 2 | **httpx** | HTTP probing | [projectdiscovery/httpx](https://github.com/projectdiscovery/httpx) |
+| 3 | **nuclei** | Template-based scanning | [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) |
+| 4 | **dalfox** | XSS scanning | [dalfox/dalfox](https://github.com/dalfox/dalfox) |
+| 5 | **arjun** | Parameter discovery | [s0md3v/Arjun](https://github.com/s0md3v/Arjun) |
+| 6 | **ffuf** | Fuzzing | [ffuf/ffuf](https://github.com/ffuf/ffuf) |
+| 7 | **waybackurls / gau** | URL harvesting | [tomnomnom/waybackurls](https://github.com/tomnomnom/waybackurls) / [lc/gau](https://github.com/lc/gau) |
+| 8 | **gf + SecLists** | Pattern matching + wordlists | [tomnomnom/gf](https://github.com/tomnomnom/gf) / [danielmiessler/SecLists](https://github.com/danielmiessler/SecLists) |
+| 9 | **subfinder** | Subdomain enum | [projectdiscovery/subfinder](https://github.com/projectdiscovery/subfinder) |
+| 10 | **naabu** | Port scanning | [projectdiscovery/naabu](https://github.com/projectdiscovery/naabu) |
+| 11 | **sqlmap** | SQL injection | [sqlmapproject/sqlmap](https://github.com/sqlmapproject/sqlmap) |
+| 12 | **wpscan** | WordPress targets | [wpscanteam/wpscan](https://github.com/wpscanteam/wpscan) |
+| 13 | **interactsh** | OOB testing | [projectdiscovery/interactsh](https://github.com/projectdiscovery/interactsh) |
+| 14 | **kiterunner** | API/content discovery | [assetnote/kiterunner](https://github.com/assetnote/kiterunner) |
+| 15 | **ReconFTW** | Automation wrapper | [six2dez/reconftw](https://github.com/six2dez/reconftw) |
+
+### Quick Install - Core Set
+```bash
+# Install the essential 15-tool core set
+sudo python reconranger.py -c core
+```
+
+---
+
 ## 📂 Installation Commands
 
 ```bash

@@ -24,7 +24,8 @@ CATEGORIES = {
     "takeover": ["subjack", "subzy", "subover"],
     "osint": ["github-dorks", "githound", "jsecret", "virustotalx", "metabigor"],
     "utils": ["waybackurls", "gau", "anew", "interactsh", "gf", "uro", "seclists"],
-    "auto": ["reconftw", "aidor", "enumrust", "cvinder", "jeeves"]
+    "auto": ["reconftw", "aidor", "enumrust", "cvinder", "jeeves"],
+    "core": ["httpx", "nuclei", "dalfox", "arjun", "ffuf", "waybackurls", "gau", "gf", "seclists", "subfinder", "naabu", "sqlmap", "wpscan", "interactsh", "kiterunner", "reconftw"]
 }
 
 def main():
@@ -43,9 +44,13 @@ def main():
     if args.categories:
         print("\n📂 Available Categories:")
         for cat, tools in CATEGORIES.items():
-            print(f"  • {cat:15s} ({len(tools)} tools)")
+            if cat == "core":
+                print(f"  • {cat:15s} ({len(tools)} tools) ⭐ Top Hunters Core Set")
+            else:
+                print(f"  • {cat:15s} ({len(tools)} tools)")
         print(f"\n📖 Full tool list: TOOLS.md")
         print("💡 Use: python reconranger.py -c <category>")
+        print("⭐ Tip: Use 'core' for the 15 essential tools top hunters use daily")
         return
     
     if args.links:
