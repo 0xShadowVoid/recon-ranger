@@ -86,7 +86,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     },
     "katana": {
         "type": "go",
-        "package": "github.com/projectdiscovery/katana/cmd/katana@v1.0.4",
+        "package": "github.com/projectdiscovery/katana/cmd/katana",
         "binary": "katana",
         "apt": "katana",
         "description": "Next-gen crawling and spidering framework",
@@ -508,7 +508,6 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "type": "go",
         "package": "github.com/LukaSikic/subzy/cmd/subzy",
         "binary": "subzy",
-        "branch": "main",
         "apt": None,
         "description": "Fast subdomain takeover scanner",
         "example": "subzy -target https://target.com",

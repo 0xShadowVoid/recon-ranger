@@ -271,7 +271,11 @@ class ReconRangerInstaller:
         
         # Run go install with longer timeout for large tools
         print(f"    Downloading {name}...", end="", flush=True)
-        ok, err = self._run(["go", "install", f"{cfg['package']}@latest"], timeout=600)
+        package = cfg['package']
+        # Don't add @latest if package already has version
+        if '@' not in package:
+            package = f"{package}@latest"
+        ok, err = self._run(["go", "install", package], timeout=600)
         if not ok:
             error_logger.error(f"Failed to install {name}: {err}")
             print(f"\r    {name} failed: {err[:100]}")
