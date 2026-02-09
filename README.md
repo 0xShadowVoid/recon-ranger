@@ -1,10 +1,11 @@
-# 🦅 ReconRanger - Universal Recon Toolkit Installer
+# 🦅 ReconRanger v2.0 - Universal Recon Toolkit Installer
 
 > One-command installer for 61 professional recon tools (subfinder, amass, nuclei, sqlmap, dalfox, metasploit, jeeves)  
-> ✅ Works on Debian/Ubuntu/Kali/Parrot/Mint ✅ GPL v3 Licensed ✅ Progress bars
+> ✅ Works on Debian/Ubuntu/Kali/Parrot/Mint ✅ GPL v3 Licensed ✅ Progress bars ✅ Top Hunters Core Set
 
 [![Linux](https://img.shields.io/badge/Linux-Debian%20%7C%20Ubuntu%20%7C%20Kali%20%7C%20Parrot-blue?logo=linux)](https://www.debian.org)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
+[![Version: 2.0](https://img.shields.io/badge/Version-2.0-blue.svg)](https://github.com/ShadowVoid-King/Recon-Ranger/releases)
 
 ---
 

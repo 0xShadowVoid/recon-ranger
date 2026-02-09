@@ -1,6 +1,10 @@
 """Tool configuration - minimal, validated"""
 from typing import Dict, Any, Optional
 
+# Version information
+VERSION = "2.0"
+DESCRIPTION = "ReconRanger v2.0 - Universal Recon Toolkit Installer"
+
 # Only essential fields required
 TOOL_SCHEMA = {
     "type": str,
@@ -8,7 +12,7 @@ TOOL_SCHEMA = {
     "description": str,
 }
 
-# All 34 recon tools - kept simple
+# All 61 recon tools - kept simple
 TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     "amass": {
         "type": "go",
