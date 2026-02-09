@@ -1,7 +1,7 @@
-"""Simple installer with progress bars - kept short"""
+"""Simple installer with progress bars - v2.0 surgical toolkit"""
 import os, sys, shutil, subprocess, tempfile, re
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 from core.system import SystemChecker
 from core.logger import setup_logging, get_error_logger
 
@@ -48,6 +48,147 @@ class ReconRangerInstaller:
         self.bin_dir = Path("/usr/local/bin")
         self.system = SystemChecker()
         self.results = {}
+        
+        # v2.0: Add backup directory for rollback protection
+        self.backup_dir = self.user_home / ".recon-backups"
+        self.backup_dir.mkdir(exist_ok=True)
+        
+    def install_category(self, category: str) -> bool:
+        """Install all tools from a category"""
+        from core.config import CATEGORIES
+        if category not in CATEGORIES:
+            print(f"{Colors.RED}❌ Unknown category: {category}{Colors.RESET}")
+            print(f"{Colors.CYAN}Available categories: {', '.join(CATEGORIES.keys())}{Colors.RESET}")
+            return False
+            
+        tools_to_install = CATEGORIES[category]
+        print(f"{Colors.BLUE}📂 Installing {category} category ({len(tools_to_install)} tools){Colors.RESET}")
+        return self._install_tools_list(tools_to_install)
+        
+    def install_multiple_tools(self, numbers: List[int]) -> bool:
+        """Install tools by number (1-indexed)"""
+        tool_list = list(self.tools.keys())
+        tools_to_install = []
+        
+        for num in numbers:
+            if 1 <= num <= len(tool_list):
+                tool_name = tool_list[num - 1]
+                tools_to_install.append(tool_name)
+            else:
+                print(f"{Colors.YELLOW}⚠️ Tool #{num} not found (1-{len(tool_list)}){Colors.RESET}")
+                
+        if not tools_to_install:
+            print(f"{Colors.RED}❌ No valid tools specified{Colors.RESET}")
+            return False
+            
+        print(f"{Colors.BLUE}🔧 Installing {len(tools_to_install)} tools by number{Colors.RESET}")
+        return self._install_tools_list(tools_to_install)
+        
+    def install_range(self, start: int, end: int, skip: List[int] = None) -> bool:
+        """Install tools in a range, optionally skipping some"""
+        tool_list = list(self.tools.keys())
+        skip = skip or []
+        
+        if start < 1 or end > len(tool_list) or start > end:
+            print(f"{Colors.RED}❌ Invalid range: {start}-{end} (1-{len(tool_list)}){Colors.RESET}")
+            return False
+            
+        tools_to_install = []
+        for i in range(start, end + 1):
+            if i not in skip:
+                tool_name = tool_list[i - 1]
+                tools_to_install.append(tool_name)
+                
+        if not tools_to_install:
+            print(f"{Colors.RED}❌ No tools to install in range {start}-{end}{Colors.RESET}")
+            return False
+            
+        skip_str = f" (skipping {skip})" if skip else ""
+        print(f"{Colors.BLUE}🔧 Installing range {start}-{end}{skip_str}: {len(tools_to_install)} tools{Colors.RESET}")
+        return self._install_tools_list(tools_to_install)
+        
+    def _install_tools_list(self, tools_to_install: List[str]) -> bool:
+        """Internal method to install a list of tools"""
+        success_count = 0
+        failed_tools = []
+        
+        with tqdm(total=len(tools_to_install), desc="Installing tools", unit="tool") as pbar:
+            for tool_name in tools_to_install:
+                if tool_name not in self.tools:
+                    print(f"{Colors.YELLOW}⚠️ Tool '{tool_name}' not found in configuration{Colors.RESET}")
+                    failed_tools.append(tool_name)
+                    pbar.update(1)
+                    continue
+                    
+                # Backup existing binary if it exists
+                self._backup_tool(tool_name)
+                
+                if self._install_single_tool(tool_name):
+                    success_count += 1
+                    self.results[tool_name] = True
+                else:
+                    failed_tools.append(tool_name)
+                    self.results[tool_name] = False
+                    
+                pbar.update(1)
+                
+        # Summary
+        print(f"\n{Colors.GREEN}✅ Successfully installed: {success_count}/{len(tools_to_install)}{Colors.RESET}")
+        if failed_tools:
+            print(f"{Colors.RED}❌ Failed: {', '.join(failed_tools)}{Colors.RESET}")
+            
+        return success_count == len(tools_to_install)
+        
+    def _backup_tool(self, tool_name: str):
+        """Create timestamped backup before installation"""
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        
+        # Find existing binary
+        tool_config = self.tools[tool_name]
+        binary_name = tool_config.get('binary', tool_name)
+        
+        # Check common locations
+        locations = [
+            self.gobin / binary_name,
+            self.bin_dir / binary_name,
+            Path(f"/usr/bin/{binary_name}"),
+            Path(f"/usr/local/bin/{binary_name}")
+        ]
+        
+        for location in locations:
+            if location.exists():
+                backup_path = self.backup_dir / f"{binary_name}_{timestamp}"
+                try:
+                    shutil.copy2(location, backup_path)
+                    logger.info(f"Backed up {binary_name} to {backup_path}")
+                    break
+                except Exception as e:
+                    logger.warning(f"Failed to backup {binary_name}: {e}")
+                    
+    def rollback_tool(self, tool_name: str) -> bool:
+        """Rollback a tool to the last backup"""
+        tool_config = self.tools[tool_name]
+        binary_name = tool_config.get('binary', tool_name)
+        
+        # Find latest backup
+        backups = list(self.backup_dir.glob(f"{binary_name}_*"))
+        if not backups:
+            print(f"{Colors.YELLOW}⚠️ No backup found for {binary_name}{Colors.RESET}")
+            return False
+            
+        latest_backup = max(backups, key=lambda x: x.stat().st_mtime)
+        
+        # Restore backup
+        target_location = self.gobin / binary_name
+        try:
+            shutil.copy2(latest_backup, target_location)
+            os.chmod(target_location, 0o755)
+            print(f"{Colors.GREEN}✅ Rolled back {binary_name} to backup from {latest_backup.name}{Colors.RESET}")
+            return True
+        except Exception as e:
+            print(f"{Colors.RED}❌ Failed to rollback {binary_name}: {e}{Colors.RESET}")
+            return False
 
     def _find_go(self) -> str:
         """Find Go binary in common locations"""
@@ -79,6 +220,20 @@ class ReconRangerInstaller:
         except Exception as e:
             error_logger.error(f"Command failed: {' '.join(cmd)} - {str(e)}")
             return (False, str(e))
+
+    def _find_binary_path(self, binary: str) -> str:
+        """Find the path of an installed binary"""
+        # Check common locations in order
+        for path in [self.gobin / binary, self.bin_dir / binary, Path.home() / ".local" / "bin" / binary]:
+            if path.exists():
+                return str(path)
+        
+        # Check system PATH
+        system_path = shutil.which(binary)
+        if system_path:
+            return system_path
+            
+        return "Not found"
 
     def _is_installed(self, binary: str) -> bool:
         """Check if binary exists in PATH or common locations"""

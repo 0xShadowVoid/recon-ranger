@@ -1,9 +1,9 @@
-"""Tool configuration - minimal, validated"""
+"""Tool configuration - ReconRanger v2.0 Surgical Toolkit"""
 from typing import Dict, Any, Optional
 
 # Version information
 VERSION = "2.0"
-DESCRIPTION = "ReconRanger v2.0 - Universal Recon Toolkit Installer"
+DESCRIPTION = "ReconRanger v2.0 - Python Rewrite with Surgical Core Toolkit"
 
 # Only essential fields required
 TOOL_SCHEMA = {
@@ -12,8 +12,35 @@ TOOL_SCHEMA = {
     "description": str,
 }
 
-# All 61 recon tools - kept simple
+# Refined Category Structure (11 logical sections)
+CATEGORIES = {
+    "core": [
+        "bbot", "subfinder", "sublist3r", "subdomainizer", "assetfinder",
+        "dnsx", "httpx", "naabu", "katana", "gospider", "ffuf",
+        "arjun", "subzy", "nuclei", "amass"
+    ],
+    "subdomains": ["shuffledns", "github-subdomains"],
+    "js": ["linkfinder", "jsfinder", "jsleak", "jsecret"],
+    "osint": ["gau", "waybackurls", "githound", "github-dorks", "paramspider"],
+    "web": ["kiterunner", "cewl"],
+    "vuln": ["xsstrike", "dalfox", "sqlmap", "ghauri", "wafw00f", "graphw00f"],
+    "cloud": ["cloud_enum", "s3scanner"],
+    "takeover": ["subjack", "subover"],
+    "ports": ["masscan", "metabigor"],
+    "cms": ["wpscan", "droopescan", "nikto"],
+    "utils": ["anew", "gf", "seclists", "interactsh", "reconftw"]
+}
+
+# All 61 recon tools - surgical selection
 TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
+    "bbot": {
+        "type": "python",
+        "package": "bbot",
+        "binary": "bbot",
+        "apt": None,
+        "description": "All-in-one recon framework (replaces 10+ tools; handles subdomains → ports → endpoints → vulns recursively)",
+        "example": "bbot -t example.com -m subfinder httpx nuclei",
+    },
     "amass": {
         "type": "go",
         "package": "github.com/owasp-amass/amass/v4/cmd/amass",
