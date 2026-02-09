@@ -4,6 +4,10 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "git add": true
+        "git add": true,
+        "/^python3 validate\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }
