@@ -112,7 +112,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     },
     "sublist3r": {
         "type": "python",
-        "package": "sublist3r==1.2.1",
+        "package": "sublist3r==1.0",
         "binary": "sublist3r",
         "apt": None,
         "description": "Fast subdomain enumeration using OSINT sources",
@@ -160,6 +160,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "repo": "https://github.com/twelvesec/githound.git",
         "path": "/opt/githound",
         "binary": "githound",
+        "post_clone": "go mod init githound && go mod tidy",
         "build_cmd": "go build -o githound .",
         "description": "GitHub secrets hunter and sensitive data finder",
         "example": "githound --org target-org --keywords api_key,password",
