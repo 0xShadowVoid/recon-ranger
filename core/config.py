@@ -86,7 +86,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     },
     "katana": {
         "type": "go",
-        "package": "github.com/projectdiscovery/katana/cmd/katana",
+        "package": "github.com/projectdiscovery/katana/cmd/katana@v1.0.4",
         "binary": "katana",
         "apt": "katana",
         "description": "Next-gen crawling and spidering framework",
@@ -214,7 +214,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     },
     "arjun": {
         "type": "go",
-        "package": "github.com/s0md3v/arjun@latest",
+        "package": "github.com/s0md3v/arjun/cmd/arjun",
         "binary": "arjun",
         "apt": None,
         "description": "HTTP parameter discovery suite",
@@ -506,7 +506,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     },
     "subzy": {
         "type": "go",
-        "package": "github.com/LukaSikic/subzy@latest",
+        "package": "github.com/PentestPad/subzy@latest",
         "binary": "subzy",
         "apt": None,
         "description": "Fast subdomain takeover scanner",
