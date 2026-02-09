@@ -72,6 +72,9 @@ Examples:
         installed = []
         missing = []
         for name, cfg in TOOL_DEFINITIONS.items():
+            # Skip tools without binary field
+            if "binary" not in cfg:
+                continue
             binary = cfg["binary"]
             binary_path = Path("/usr/local/bin") / binary
             if binary_path.exists():
@@ -79,7 +82,8 @@ Examples:
             else:
                 missing.append(name)
         
-        print(f"✅ Installed: {len(installed)}/{len(TOOL_DEFINITIONS)} tools")
+        total_tools = sum(1 for cfg in TOOL_DEFINITIONS.values() if "binary" in cfg)
+        print(f"✅ Installed: {len(installed)}/{total_tools} tools")
         if missing:
             print(f"❌ Missing: {', '.join(missing)}")
         else:
