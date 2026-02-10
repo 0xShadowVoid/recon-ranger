@@ -335,7 +335,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "repo": "https://github.com/robertdavidgraham/masscan.git",
         "path": "/opt/masscan",
         "binary": "masscan",
-        "build_cmd": "make && sudo make install",
+        "build_cmd": "make && make install",
         "description": "High-speed port scanner",
         "example": "masscan -p1-65535 target.com",
     },

@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, Tuple, List
 from core.system import SystemChecker
 from core.logger import setup_logging, get_error_logger
+from core.config import CATEGORIES
 
 try:
     from tqdm import tqdm
@@ -55,7 +56,6 @@ class ReconRangerInstaller:
         
     def install_category(self, category: str) -> bool:
         """Install all tools from a category"""
-        from core.config import CATEGORIES
         if category not in CATEGORIES:
             print(f"{Colors.RED}❌ Unknown category: {category}{Colors.RESET}")
             print(f"{Colors.CYAN}Available categories: {', '.join(CATEGORIES.keys())}{Colors.RESET}")
@@ -150,12 +150,12 @@ class ReconRangerInstaller:
         tool_config = self.tools[tool_name]
         binary_name = tool_config.get('binary', tool_name)
         
-        # Check common locations
+        # Check common locations (prefer system paths over gobin)
         locations = [
-            self.gobin / binary_name,
             self.bin_dir / binary_name,
+            Path(f"/usr/local/bin/{binary_name}"),
             Path(f"/usr/bin/{binary_name}"),
-            Path(f"/usr/local/bin/{binary_name}")
+            self.gobin / binary_name,
         ]
         
         for location in locations:
@@ -181,8 +181,8 @@ class ReconRangerInstaller:
             
         latest_backup = max(backups, key=lambda x: x.stat().st_mtime)
         
-        # Restore backup
-        target_location = self.gobin / binary_name
+        # Restore backup to system bin directory (not just gobin)
+        target_location = self.bin_dir / binary_name
         try:
             shutil.copy2(latest_backup, target_location)
             os.chmod(target_location, 0o755)
@@ -283,10 +283,8 @@ class ReconRangerInstaller:
         print(f"    Downloading {name}...", end="", flush=True)
         package = cfg['package']
         
-        # In install_go method, replace the version override block (around line 207-221):
-
         # For known problematic packages, use specific versions instead of @latest
-        # Version goes at the END of the full import path
+        # Version goes at the END of the full import path (not in the middle)
         version_overrides = {
             "github.com/projectdiscovery/dnsx/cmd/dnsx": "v1.1.1",
             "github.com/projectdiscovery/katana/cmd/katana": "v0.2.0",
@@ -295,7 +293,7 @@ class ReconRangerInstaller:
             "github.com/projectdiscovery/subfinder/v2/cmd/subfinder": "v2.6.0",
         }
 
-        # Apply version override if available - version goes at the END
+        # Apply version override if available - version goes at the END of full path
         if package in version_overrides:
             version = version_overrides[package]
             package = f"{package}@{version}"
@@ -350,9 +348,8 @@ class ReconRangerInstaller:
             return True
         # Try to create launcher
         try:
-            result = subprocess.run([py, "-c", f"import {binary}; print({binary}.__file__)"], 
-                                  capture_output=True, text=True)
-            if result.returncode == 0:
+            result = self._run([py, "-c", f"import {binary}; print({binary}.__file__)"], timeout=30)
+            if result[0]:  # Success
                 launcher = self.bin_dir / binary
                 launcher.write_text(f"#!/usr/bin/env python3\nimport sys\nimport {binary}\nif hasattr({binary}, 'main'):\n    {binary}.main()\nelse:\n    print('Module {binary} has no main function')\n")
                 launcher.chmod(0o755)
@@ -401,11 +398,20 @@ class ReconRangerInstaller:
                 flags.append("--break-system-packages")
             reqs = cfg["requirements"]
             if reqs[0] == "-r":
-                self._run([py, "-m", "pip"] + flags + reqs, timeout=120)
+                ok, err = self._run([py, "-m", "pip"] + flags + reqs, timeout=120)
             else:
-                self._run([py, "-m", "pip"] + flags + reqs, timeout=120)
+                ok, err = self._run([py, "-m", "pip"] + flags + reqs, timeout=120)
+            if not ok:
+                print(f"\r    {name} requirements install failed: {err[:100]}")
+                error_logger.error(f"Requirements install failed for {name}: {err}")
+                return False
+                
         if "post_clone" in cfg:
-            self._run(cfg["post_clone"].split(), cwd=path, timeout=120)
+            ok, err = self._run(cfg["post_clone"].split(), cwd=path, timeout=120)
+            if not ok:
+                print(f"\r    {name} post-clone failed: {err[:100]}")
+                return False
+                
         if "build_cmd" in cfg:
             # Use _run method to get proper Go path and environment
             print(f"    Building {name}...", end="", flush=True)
@@ -421,7 +427,11 @@ class ReconRangerInstaller:
         launcher_created = False
         
         if "entrypoint" in cfg:
-            launcher.write_text(f"#!/bin/bash\nexec {sys.executable} {cfg['entrypoint']} \"\$@\"\n")
+            entrypoint = Path(cfg["entrypoint"])
+            if not entrypoint.exists():
+                print(f"\r    {name}: entrypoint not found: {entrypoint}")
+                return False
+            launcher.write_text(f"#!/bin/bash\nexec {sys.executable} {cfg['entrypoint']} \"$@\"\n")
             launcher_created = True
         elif (path / binary).exists():
             if launcher.exists():
@@ -559,9 +569,12 @@ class ReconRangerInstaller:
             else:
                 try:
                     idx = int(choice) - 1
+                    if idx < 0 or idx >= len(self.tools):
+                        print(f"{Colors.RED}Invalid selection. Must be between 1 and {len(self.tools)}{Colors.RESET}")
+                        sys.exit(1)
                     targets = [list(self.tools.keys())[idx]]
-                except:
-                    print("Invalid")
+                except ValueError:
+                    print(f"{Colors.RED}Invalid input. Please enter a number or 'all'{Colors.RESET}")
                     sys.exit(1)
         
         print(f"\n{Colors.BLUE}Installing {len(targets)} tools...{Colors.RESET}\n")
