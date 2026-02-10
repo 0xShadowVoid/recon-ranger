@@ -260,13 +260,21 @@ class ReconRangerInstaller:
         """Install Go tool via apt or go install"""
         binary = cfg["binary"]
         
-        # Try apt only if available and quick
+        # Try apt FIRST - more reliable than go install@latest
         if cfg.get("apt"):
             ok, _ = self._run(["apt-cache", "show", cfg["apt"]], timeout=10)
             if ok:
-                ok, _ = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=60)
+                print(f"    Installing via apt...", end="", flush=True)
+                ok, err = self._run(["apt-get", "install", "-y", "-qq", cfg["apt"]], timeout=120)
                 if ok and self._is_installed(binary):
+                    print(f"\r    {name} installed (via apt)")
                     return True
+                elif ok:
+                    # apt installed but binary not found, continue to go install
+                    pass
+                else:
+                    # apt install failed, try go
+                    pass
         
         # Ensure go bin directory exists
         self.gobin.mkdir(parents=True, exist_ok=True)
@@ -274,9 +282,26 @@ class ReconRangerInstaller:
         # Run go install with longer timeout for large tools
         print(f"    Downloading {name}...", end="", flush=True)
         package = cfg['package']
-        # Don't add @latest if package already has version
+        
+        # For known problematic packages, use specific versions instead of @latest
+        version_overrides = {
+            "github.com/projectdiscovery/dnsx": "v1.1.1",
+            "github.com/projectdiscovery/katana": "v0.2.0",  # Avoid latest broken versions
+            "github.com/projectdiscovery/nuclei": "v3.1.2",
+            "github.com/projectdiscovery/httpx": "v1.3.3",
+            "github.com/projectdiscovery/subfinder": "v2.6.0",
+        }
+        
+        # Check if we have a specific version for this package
+        for pkg_prefix, version in version_overrides.items():
+            if package.startswith(pkg_prefix):
+                package = f"{pkg_prefix}{version}"
+                break
+        
+        # Only add @latest if no version specified
         if '@' not in package:
             package = f"{package}@latest"
+        
         ok, err = self._run(["go", "install", package], timeout=600)
         if not ok:
             error_logger.error(f"Failed to install {name}: {err}")
