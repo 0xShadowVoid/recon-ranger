@@ -283,8 +283,10 @@ class ReconRangerInstaller:
         print(f"    Downloading {name}...", end="", flush=True)
         package = cfg['package']
         
+        # In install_go method, replace the version override block (around line 207-221):
+
         # For known problematic packages, use specific versions instead of @latest
-        # Version goes at module root level, not after the /cmd/ path
+        # Version goes at the END of the full import path
         version_overrides = {
             "github.com/projectdiscovery/dnsx/cmd/dnsx": "v1.1.1",
             "github.com/projectdiscovery/katana/cmd/katana": "v0.2.0",
@@ -292,16 +294,11 @@ class ReconRangerInstaller:
             "github.com/projectdiscovery/httpx/cmd/httpx": "v1.3.3",
             "github.com/projectdiscovery/subfinder/v2/cmd/subfinder": "v2.6.0",
         }
-        
-        # Apply version override if available
+
+        # Apply version override if available - version goes at the END
         if package in version_overrides:
             version = version_overrides[package]
-            # Split at /cmd/ to insert version at module root
-            if '/cmd/' in package:
-                module, cmd_path = package.split('/cmd/', 1)
-                package = f"{module}@{version}/cmd/{cmd_path}"
-            else:
-                package = f"{package}@{version}"
+            package = f"{package}@{version}"
         # Only add @latest if no version specified
         elif '@' not in package:
             package = f"{package}@latest"
