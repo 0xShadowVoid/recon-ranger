@@ -284,22 +284,20 @@ class ReconRangerInstaller:
         package = cfg['package']
         
         # For known problematic packages, use specific versions instead of @latest
+        # These are full package paths that need to be matched exactly
         version_overrides = {
-            "github.com/projectdiscovery/dnsx": "v1.1.1",
-            "github.com/projectdiscovery/katana": "v0.2.0",  # Avoid latest broken versions
-            "github.com/projectdiscovery/nuclei": "v3.1.2",
-            "github.com/projectdiscovery/httpx": "v1.3.3",
-            "github.com/projectdiscovery/subfinder": "v2.6.0",
+            "github.com/projectdiscovery/dnsx/cmd/dnsx": "v1.1.1",
+            "github.com/projectdiscovery/katana/cmd/katana": "v0.2.0",
+            "github.com/projectdiscovery/nuclei/v3/cmd/nuclei": "v3.1.2",
+            "github.com/projectdiscovery/httpx/cmd/httpx": "v1.3.3",
+            "github.com/projectdiscovery/subfinder/v2/cmd/subfinder": "v2.6.0",
         }
         
-        # Check if we have a specific version for this package
-        for pkg_prefix, version in version_overrides.items():
-            if package.startswith(pkg_prefix):
-                package = f"{pkg_prefix}{version}"
-                break
-        
+        # Check if we have a specific version for this exact package path
+        if package in version_overrides:
+            package = f"{package}@{version_overrides[package]}"
         # Only add @latest if no version specified
-        if '@' not in package:
+        elif '@' not in package:
             package = f"{package}@latest"
         
         ok, err = self._run(["go", "install", package], timeout=600)

@@ -83,9 +83,13 @@ Examples:
                 missing.append(name)
         
         total_tools = sum(1 for cfg in TOOL_DEFINITIONS.values() if "binary" in cfg)
+        print(f"\n🔍 Installation Status Check:")
         print(f"✅ Installed: {len(installed)}/{total_tools} tools")
+        if installed:
+            print(f"   {', '.join(installed)}")
         if missing:
-            print(f"❌ Missing: {', '.join(missing)}")
+            print(f"❌ Missing: {len(missing)} tools")
+            print(f"   {', '.join(missing)}")
         else:
             print("🎉 All tools installed!")
         return
