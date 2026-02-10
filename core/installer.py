@@ -284,7 +284,7 @@ class ReconRangerInstaller:
         package = cfg['package']
         
         # For known problematic packages, use specific versions instead of @latest
-        # These are full package paths that need to be matched exactly
+        # Version goes at module root level, not after the /cmd/ path
         version_overrides = {
             "github.com/projectdiscovery/dnsx/cmd/dnsx": "v1.1.1",
             "github.com/projectdiscovery/katana/cmd/katana": "v0.2.0",
@@ -293,9 +293,15 @@ class ReconRangerInstaller:
             "github.com/projectdiscovery/subfinder/v2/cmd/subfinder": "v2.6.0",
         }
         
-        # Check if we have a specific version for this exact package path
+        # Apply version override if available
         if package in version_overrides:
-            package = f"{package}@{version_overrides[package]}"
+            version = version_overrides[package]
+            # Split at /cmd/ to insert version at module root
+            if '/cmd/' in package:
+                module, cmd_path = package.split('/cmd/', 1)
+                package = f"{module}@{version}/cmd/{cmd_path}"
+            else:
+                package = f"{package}@{version}"
         # Only add @latest if no version specified
         elif '@' not in package:
             package = f"{package}@latest"
