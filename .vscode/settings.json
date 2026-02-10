@@ -8,6 +8,7 @@
         "/^python3 validate\\.py$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "git commit": true
     }
 }
