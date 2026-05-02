@@ -1,0 +1,146 @@
+{
+  "bbot": {
+    "type": "python",
+    "package": "bbot",
+    "binary": "bbot",
+    "description": "All-in-one recon framework (replaces 10+ tools; handles subdomains → ports → endpoints → vulns recursively)",
+    "category": "core",
+    "example": "bbot -t example.com -m subfinder httpx nuclei"
+  },
+  "subfinder": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
+    "binary": "subfinder",
+    "description": "Fast subdomain discovery using 30+ passive sources",
+    "category": "core",
+    "example": "subfinder -d target.com -silent -o subs.txt"
+  },
+  "amass": {
+    "type": "go",
+    "package": "github.com/owasp-amass/amass/v4/cmd/amass@latest",
+    "binary": "amass",
+    "description": "In-depth attack surface mapping with graph visualization",
+    "category": "core",
+    "example": "amass enum -d target.com -o subs.txt"
+  },
+  "httpx": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/httpx/cmd/httpx@latest",
+    "binary": "httpx",
+    "description": "HTTP toolkit for probing, fingerprinting, and crawling",
+    "category": "core",
+    "example": "cat subs.txt | httpx -silent -status-code"
+  },
+  "nuclei": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",
+    "binary": "nuclei",
+    "description": "Fast vulnerability scanner with 10,000+ community templates",
+    "category": "core",
+    "post_install": "nuclei -ut -silent",
+    "example": "cat alive.txt | nuclei -t exposures/ -severity critical,high"
+  },
+  "katana": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/katana/cmd/katana@latest",
+    "binary": "katana",
+    "description": "Next-gen crawling and spidering framework",
+    "category": "core",
+    "example": "katana -u https://target.com -silent -depth 3 -js-crawl"
+  },
+  "ffuf": {
+    "type": "go",
+    "package": "github.com/ffuf/ffuf/v2@latest",
+    "binary": "ffuf",
+    "description": "Fast web fuzzer for directory brute-forcing",
+    "category": "core",
+    "example": "ffuf -w wordlist.txt -u https://target.com/FUZZ"
+  },
+  "naabu": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest",
+    "binary": "naabu",
+    "description": "Fast port scanner for network reconnaissance",
+    "category": "core",
+    "example": "naabu -host target.com -p 80,443,8080,8443"
+  },
+  "dalfox": {
+    "type": "go",
+    "package": "github.com/dalfox/dalfox/v2@latest",
+    "binary": "dalfox",
+    "description": "Modern XSS scanner and parameter analyzer",
+    "category": "vuln",
+    "example": "dalfox url https://target.com"
+  },
+  "arjun": {
+    "type": "git",
+    "repo": "https://github.com/s0md3v/Arjun.git",
+    "path": "/opt/Arjun",
+    "binary": "arjun",
+    "entrypoint": "/opt/Arjun/arjun.py",
+    "requirements": ["-r", "/opt/Arjun/requirements.txt"],
+    "description": "HTTP parameter discovery suite",
+    "category": "web",
+    "example": "python3 arjun.py -u https://target.com"
+  },
+  "waybackurls": {
+    "type": "go",
+    "package": "github.com/tomnomnom/waybackurls@latest",
+    "binary": "waybackurls",
+    "description": "Fetch all known URLs from Wayback Machine for a domain",
+    "category": "osint",
+    "example": "echo example.com | waybackurls"
+  },
+  "gau": {
+    "type": "go",
+    "package": "github.com/lc/gau/v2/cmd/gau@latest",
+    "binary": "gau",
+    "description": "Get all known URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl",
+    "category": "osint",
+    "example": "gau example.com"
+  },
+  "anew": {
+    "type": "go",
+    "package": "github.com/tomnomnom/anew@latest",
+    "binary": "anew",
+    "description": "Append lines to a file, avoiding duplicates",
+    "category": "utils",
+    "example": "cat old.txt new.txt | anew all.txt"
+  },
+  "notify": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/notify/cmd/notify@latest",
+    "binary": "notify",
+    "description": "Real-time notifications for all your recon workflow",
+    "category": "utils",
+    "example": "echo 'New subdomain found!' | notify -silent"
+  },
+  "interactsh-client": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest",
+    "binary": "interactsh-client",
+    "description": "Client for OOB interaction detection",
+    "category": "utils",
+    "example": "interactsh-client"
+  },
+  "pegpon": {
+    "type": "git",
+    "repo": "https://github.com/LABx-EnV/PEGPON.git",
+    "path": "/opt/PEGPON",
+    "binary": "pegpon",
+    "entrypoint": "/opt/PEGPON/pegpon",
+    "description": "Advanced Bash-based automation tool for subdomain enumeration, fuzzing, and web reconnaissance.",
+    "category": "automation",
+    "example": "pegpon -d example.com"
+  },
+  "x8": {
+    "type": "git",
+    "repo": "https://github.com/Sh1Yo/x8",
+    "path": "/opt/x8",
+    "binary": "x8",
+    "build_cmd": "cargo build --release",
+    "description": "Advanced parameter discovery tool written in Rust.",
+    "category": "web",
+    "example": "x8 -u https://example.com/ -w wordlist.txt"
+  }
+}

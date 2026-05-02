@@ -1,148 +1,159 @@
 #!/usr/bin/env python3
-"""ReconRanger v2.0 CLI - Surgical Recon Toolkit"""
+"""
+🦅 ReconRanger v3.0 - Surgical Recon Toolkit & Tool Manager
+Developed by 0xShadowVoid
+"""
+
 import sys
+import json
 import argparse
-from core.installer import ReconRangerInstaller
-from core.config import TOOL_DEFINITIONS, CATEGORIES
 from pathlib import Path
+from core.installer import ReconRangerInstaller
+from core.system import SystemManager
+from core.keys import KeyManager
+from core.logger import setup_logging
+
+# Load tool registry
+TOOLS_FILE = Path(__file__).parent / "tools.json"
+def load_tools():
+    if not TOOLS_FILE.exists():
+        return {}
+    return json.loads(TOOLS_FILE.read_text())
+
+def save_tools(tools):
+    TOOLS_FILE.write_text(json.dumps(tools, indent=2))
 
 def main():
+    tools = load_tools()
+    installer = ReconRangerInstaller(tools)
+    system = SystemManager()
+    key_manager = KeyManager()
+    logger = setup_logging()
+
     parser = argparse.ArgumentParser(
-        description="🦅 ReconRanger v2.0 - Surgical Recon Toolkit",
+        description="🦅 ReconRanger v3.0 - Surgical Recon Toolkit",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python3 reconranger.py -c core              # Install 13 core tools
-  python3 reconranger.py -c js osint          # Install core + JS + OSINT
-  python3 reconranger.py 2 5 7                 # Install tools by number
-  python3 reconranger.py 1-5 --skip 4         # Install range 1-5 skipping #4
-  python3 reconranger.py -t subfinder amass    # Install specific tools by name
-  python3 reconranger.py --list                    # List all tools with numbers
-  python3 reconranger.py --categories              # Show categories
+  reconranger --install-all              # Install all tools in registry
+  reconranger -t subfinder amass         # Install specific tools
+  reconranger --api                      # Manage API keys
+  reconranger --add-tool                 # Add a new tool to registry
+  reconranger --list                     # List all available tools
         """
     )
-    
-    # Installation options
-    parser.add_argument("-t", "--tools", nargs="+", help="Specific tools to install/update by name")
-    parser.add_argument("-c", "--category", help="Install all tools from category")
-    parser.add_argument("-u", "--update", action="store_true", help="Update existing tools")
-    parser.add_argument("-s", "--smart", action="store_true", help="Smart mode: skip installed, update outdated")
-    parser.add_argument("-a", "--all", action="store_true", help="Install/Update ALL tools")
-    
-    # v2.0 new options
-    parser.add_argument("numbers", nargs="*", type=int, help="Tool numbers (space-separated) or range (X-Y)")
-    parser.add_argument("--skip", type=int, nargs="+", help="Skip specific tool numbers when using range")
-    parser.add_argument("--rollback", help="Rollback specific tool to backup")
-    
-    # Information options
-    parser.add_argument("-l", "--list", action="store_true", help="List available tools with numbers")
-    parser.add_argument("--categories", action="store_true", help="List all categories")
-    parser.add_argument("--links", action="store_true", help="Show tool repository links")
-    parser.add_argument("--check", action="store_true", help="Check installation status")
-    
+
+    # Tool Installation
+    group_inst = parser.add_argument_group("Installation Options")
+    group_inst.add_argument("-t", "--tools", nargs="+", help="Specific tools to install by name")
+    group_inst.add_argument("-c", "--category", help="Install all tools from a category")
+    group_inst.add_argument("--install-all", action="store_true", help="Install ALL tools in registry")
+    group_inst.add_argument("--check", action="store_true", help="Check installation status of tools")
+
+    # API Key Management
+    group_api = parser.add_argument_group("API Key Management")
+    group_api.add_argument("--api", action="store_true", help="Launch API key configuration wizard")
+    group_api.add_argument("--apply-keys", action="store_true", help="Apply keys to tool config files and environment")
+
+    # Tool Registry Management
+    group_reg = parser.add_argument_group("Registry Management")
+    group_reg.add_argument("--add-tool", action="store_true", help="Add a new tool to the registry")
+    group_reg.add_argument("--edit-tool", help="Edit an existing tool in the registry")
+    group_reg.add_argument("--delete-tool", help="Delete a tool from the registry")
+    group_reg.add_argument("-l", "--list", action="store_true", help="List all tools in registry")
+
+    # System
+    group_sys = parser.add_argument_group("System")
+    group_sys.add_argument("--fix-deps", action="store_true", help="Auto-fix system dependencies")
+
     args = parser.parse_args()
-    
-    # Handle information commands first
-    if args.categories:
-        print("\n📂 Available Categories:")
-        for cat, tools in CATEGORIES.items():
-            if cat == "core":
-                print(f"  • {cat:15s} ({len(tools)} tools) ⭐ Surgical Core Set")
-            else:
-                print(f"  • {cat:15s} ({len(tools)} tools)")
+
+    # 1. System Fix
+    if args.fix_deps:
+        system.install_system_dependencies()
+        system.check_go()
+        return
+
+    # 2. API Management
+    if args.api:
+        key_manager.wizard()
         return
     
+    if args.apply_keys:
+        key_manager.apply_to_env()
+        return
+
+    # 3. Registry Management
+    if args.add_tool:
+        name = input("Tool Name: ").strip().lower()
+        ttype = input("Type (go/python/git/apt): ").strip().lower()
+        package = input("Package/Repo URL: ").strip()
+        binary = input("Binary Name: ").strip()
+        desc = input("Description: ").strip()
+        cat = input("Category: ").strip()
+        tools[name] = {
+            "type": ttype,
+            "package": package,
+            "binary": binary,
+            "description": desc,
+            "category": cat
+        }
+        save_tools(tools)
+        print(f"✅ Added {name} to registry.")
+        return
+
+    if args.delete_tool:
+        if args.delete_tool in tools:
+            del tools[args.delete_tool]
+            save_tools(tools)
+            print(f"✅ Deleted {args.delete_tool}.")
+        else:
+            print("❌ Tool not found.")
+        return
+
     if args.list:
-        print(f"\n🛠️ Available Tools ({len(TOOL_DEFINITIONS)} total):")
-        for i, (name, cfg) in enumerate(TOOL_DEFINITIONS.items(), 1):
-            binary_path = Path("/usr/local/bin") / cfg["binary"]
-            status = "✓" if binary_path.exists() else " "
-            print(f"  {i:2}. {name:20} {cfg['description'][:40]} {status}")
+        print(f"\n🛠️  ReconRanger Registry ({len(tools)} tools):")
+        print(f"{'#':<3} {'Name':<18} {'Category':<12} {'Description'}")
+        print("-" * 75)
+        for i, (name, cfg) in enumerate(tools.items(), 1):
+            print(f"{i:<3} {name:<18} {cfg['category']:<12} {cfg['description'][:40]}")
         return
-    
-    if args.links:
-        print(f"\n🔗 Tool Repository Links:")
-        for name, cfg in TOOL_DEFINITIONS.items():
-            if cfg.get("repo"):
-                print(f"  {name:20} {cfg['repo']}")
-        return
-    
-    if args.check:
-        print(f"\n🔍 Installation Status Check:")
-        installed = []
-        missing = []
-        for name, cfg in TOOL_DEFINITIONS.items():
-            # Skip tools without binary field
-            if "binary" not in cfg:
-                continue
-            binary = cfg["binary"]
-            binary_path = Path("/usr/local/bin") / binary
-            if binary_path.exists():
-                installed.append(name)
-            else:
-                missing.append(name)
+
+    # 4. Installation Logic
+    targets = []
+    if args.install_all:
+        targets = list(tools.keys())
+    elif args.category:
+        targets = [n for n, c in tools.items() if c['category'] == args.category]
+    elif args.tools:
+        targets = args.tools
+
+    if targets:
+        # Ensure dependencies first
+        system.install_system_dependencies()
+        system.check_go()
         
-        total_tools = sum(1 for cfg in TOOL_DEFINITIONS.values() if "binary" in cfg)
-        print(f"\n🔍 Installation Status Check:")
-        print(f"✅ Installed: {len(installed)}/{total_tools} tools")
-        if installed:
-            print(f"   {', '.join(installed)}")
-        if missing:
-            print(f"❌ Missing: {len(missing)} tools")
-            print(f"   {', '.join(missing)}")
-        else:
-            print("🎉 All tools installed!")
+        env = key_manager.get_env_vars()
+        for t in targets:
+            installer.install_tool(t, env_vars=env)
         return
-    
-    if args.rollback:
-        installer = ReconRangerInstaller(TOOL_DEFINITIONS)
-        success = installer.rollback_tool(args.rollback)
-        sys.exit(0 if success else 1)
-    
-    # Installation commands
-    installer = ReconRangerInstaller(TOOL_DEFINITIONS)
-    
-    if args.category:
-        # Support multiple categories: -c core js osint
-        from core.config import CATEGORIES
-        categories = [args.category] if isinstance(args.category, str) else args.category.split()
-        for cat in categories:
-            if cat not in CATEGORIES:
-                print(f"❌ Unknown category: {cat}")
-                print(f"Available categories: {', '.join(CATEGORIES.keys())}")
-                sys.exit(1)
-        # Install all unique tools from selected categories
-        all_tools = set()
-        for cat in categories:
-            all_tools.update(CATEGORIES[cat])
-        success = installer._install_tools_list(list(all_tools))
-        sys.exit(0 if success else 1)
-    
-    if args.tools:
-        success = installer.install_multiple_tools(args.tools)
-        sys.exit(0 if success else 1)
-    
-    if args.numbers:
-        # Handle range vs individual numbers
-        if len(args.numbers) == 2 and args.skip is None:
-            # Likely a range (X-Y)
-            start, end = args.numbers
-            success = installer.install_range(start, end)
-        elif len(args.numbers) == 2 and args.skip is not None:
-            # Range with skip
-            start, end = args.numbers
-            success = installer.install_range(start, end, args.skip)
-        else:
-            # Individual numbers
-            success = installer.install_multiple_tools(args.numbers)
-        sys.exit(0 if success else 1)
-    
-    if args.all:
-        success = installer.run(args)
-        sys.exit(0 if success else 1)
-    
-    # Default: show help
+
+    if args.check:
+        print(f"\n🔍 Installation Status:")
+        print(f"{'Tool':<18} {'Status':<12} {'Path'}")
+        print("-" * 50)
+        for name, cfg in tools.items():
+            import shutil
+            path = shutil.which(cfg['binary'])
+            status = "✅ Installed" if path else "❌ Missing"
+            print(f"{name:<18} {status:<12} {path or 'N/A'}")
+        return
+
     parser.print_help()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n👋 Exiting...")
+        sys.exit(0)

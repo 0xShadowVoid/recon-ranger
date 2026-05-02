@@ -1,4 +1,4 @@
-"""System compatibility checks with input validation"""
+"""System compatibility and dependency management - ReconRanger v3.0"""
 import os
 import shutil
 import subprocess
@@ -6,7 +6,7 @@ import platform
 from pathlib import Path
 from typing import Dict, List
 
-class SystemChecker:
+class SystemManager:
     def __init__(self):
         self.distro = self._detect_distro()
     
@@ -15,10 +15,6 @@ class SystemChecker:
         try:
             with open("/etc/os-release") as f:
                 lines = [line.strip() for line in f if line.strip()]
-            
-            # Validate file format
-            if not any(line.startswith("ID=") for line in lines):
-                raise RuntimeError("Invalid /etc/os-release format")
             
             info = {}
             for line in lines:
@@ -30,69 +26,92 @@ class SystemChecker:
                 "id": info.get("ID", "unknown").lower(),
                 "version": info.get("VERSION_ID", "unknown"),
                 "name": info.get("NAME", "Linux"),
-                "like": info.get("ID_LIKE", "")
+                "like": info.get("ID_LIKE", "").lower()
             }
-        except Exception as e:
-            raise RuntimeError(f"Failed to detect OS: {e}")
+        except Exception:
+            return {"id": "unknown", "version": "unknown", "name": "Linux", "like": ""}
     
     def is_debian_based(self) -> bool:
-        """Check if system is Debian-based with validation"""
         distro_id = self.distro["id"]
-        distro_like = self.distro["like"].lower()
+        distro_like = self.distro["like"]
         valid_ids = {"debian", "ubuntu", "kali", "parrot", "linuxmint", "pop", "mx"}
         return any(x in distro_like for x in ["debian", "ubuntu"]) or distro_id in valid_ids
-    
-    def check_python_version(self) -> None:
-        """Validate Python version"""
-        py_ver = platform.python_version()
-        py_tuple = tuple(map(int, py_ver.split('.')[:2]))
-        if py_tuple < (3, 8):
-            raise RuntimeError(f"Python 3.8+ required (found {py_ver})")
-    
-    def check_go_version(self) -> str:
-        """Validate Go version with proper error handling"""
+
+    def install_system_dependencies(self):
+        """Install core dependencies for Python, Go, and Git tools"""
+        if not self.is_debian_based():
+            print("⚠️ Non-Debian based system detected. Manual dependency installation may be required.")
+            return
+
+        deps = [
+            "git", "curl", "wget", "unzip", "tar", "build-essential",
+            "python3", "python3-pip", "python3-venv", "libpcap-dev"
+        ]
+        
+        print("⚙️ Installing system dependencies...")
+        subprocess.run(["sudo", "apt-get", "update", "-qq"], check=False)
+        subprocess.run(["sudo", "apt-get", "install", "-y", "-qq"] + deps, check=False)
+
+    def check_go(self) -> bool:
+        """Ensure Go is installed and version is >= 1.21"""
+        go_path = shutil.which("go")
+        if not go_path:
+            return self.install_go()
+        
         try:
-            # First try to find go in common locations
-            go_cmd = None
-            for path in ["/usr/local/go/bin/go", "/usr/local/bin/go", "/usr/bin/go", shutil.which("go")]:
-                if path and Path(path).exists():
-                    go_cmd = path
-                    break
-            
-            if not go_cmd:
-                raise RuntimeError("Go not found in common locations: /usr/local/go/bin/go, /usr/local/bin/go, /usr/bin/go")
-            
-            # Run go version with full path
-            result = subprocess.run([go_cmd, "version"], capture_output=True, text=True, timeout=10)
-            
-            if result.returncode != 0:
-                error_msg = result.stderr or result.stdout or "Unknown error"
-                raise RuntimeError(f"Go command failed: {error_msg}")
-            
+            result = subprocess.run([go_path, "version"], capture_output=True, text=True)
             import re
-            match = re.search(r'go(\d+\.\d+\.?\d*)', result.stdout)
-            if not match:
-                raise RuntimeError("Invalid Go version format")
-            
-            version = match.group(1)
-            major, minor = map(int, version.split('.')[:2])
-            if major < 1 or (major == 1 and minor < 19):
-                raise RuntimeError(f"Go 1.19+ required (found {version})")
-            
-            return version
-        except Exception as e:
-            raise RuntimeError(f"Go is not installed or not in PATH. Please install Go 1.19+ from https://golang.org/dl/\nDetails: {e}")
-    
-    def check_disk_space(self, min_gb: float = 3.0) -> None:
-        """Validate disk space availability"""
-        free_gb = shutil.disk_usage("/").free / (2**30)
-        if free_gb < min_gb:
-            raise RuntimeError(f"Insufficient disk space: {free_gb:.1f}GB free (need {min_gb}GB+)")
-    
-    def check_internet(self) -> None:
-        """Validate internet connectivity"""
-        import socket
+            match = re.search(r'go(\d+\.\d+)', result.stdout)
+            if match:
+                version = float(match.group(1))
+                if version < 1.21:
+                    return self.install_go()
+            return True
+        except Exception:
+            return self.install_go()
+
+    def install_go(self) -> bool:
+        """Install Go 1.22.x from official source"""
+        print("🚀 Installing/Updating Go to latest stable version...")
+        go_version = "1.22.2"
+        go_tar = f"go{go_version}.linux-amd64.tar.gz"
+        go_url = f"https://golang.org/dl/{go_tar}"
+        
         try:
-            socket.create_connection(("8.8.8.8", 53), timeout=5)
-        except OSError as e:
-            raise RuntimeError(f"No internet connection: {e}")
+            subprocess.run(["wget", "-q", go_url, "-O", f"/tmp/{go_tar}"], check=True)
+            subprocess.run(["sudo", "rm", "-rf", "/usr/local/go"], check=True)
+            subprocess.run(["sudo", "tar", "-C", "/usr/local", "-xzf", f"/tmp/{go_tar}"], check=True)
+            
+            # Setup environment variables
+            paths_to_add = [
+                'export PATH=$PATH:/usr/local/go/bin',
+                'export PATH=$PATH:$(go env GOPATH)/bin'
+            ]
+            
+            home = Path.home()
+            for shell_rc in [home / ".bashrc", home / ".zshrc"]:
+                if shell_rc.exists():
+                    content = shell_rc.read_text()
+                    for p in paths_to_add:
+                        if p not in content:
+                            with open(shell_rc, "a") as f:
+                                f.write(f"\n{p}\n")
+            
+            # Export for current session
+            os.environ["PATH"] += ":/usr/local/go/bin"
+            return True
+        except Exception as e:
+            print(f"❌ Failed to install Go: {e}")
+            return False
+
+    def ensure_global_path(self, binary_path: Path, binary_name: str):
+        """Symlink binary to /usr/local/bin for global access"""
+        target = Path("/usr/local/bin") / binary_name
+        if not target.exists() or not target.is_symlink():
+            try:
+                if target.exists():
+                    subprocess.run(["sudo", "rm", "-f", str(target)], check=True)
+                subprocess.run(["sudo", "ln", "-s", str(binary_path), str(target)], check=True)
+                subprocess.run(["sudo", "chmod", "+x", str(target)], check=True)
+            except Exception as e:
+                print(f"⚠️ Failed to create symlink for {binary_name}: {e}")

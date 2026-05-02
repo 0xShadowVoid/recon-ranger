@@ -1,0 +1,8 @@
+{
+  "tag_name": "v2.0",
+  "target_commitish": "main",
+  "name": "ReconRanger v2.0",
+  "body": "## 🚀 ReconRanger v2.0 Release\n\n### ✨ New Features\n- **61 professional security tools** for comprehensive reconnaissance\n- **Top Hunters Core Set** - 15 essential tools hunters use daily\n- **Category selection** - Install tools by category (e.g., `-c core`)\n- **Enhanced CLI** - New flags: `--categories`, `--links`\n- **Complete documentation** - TOOLS.md with direct repository links\n- **Version tracking** - Proper versioning and releases\n\n### 🛠️ Installation\n```bash\n# Install the essential 15-tool core set\nsudo python reconranger.py -c core\n\n# Install all 61 tools\nsudo python reconranger.py --all\n```\n\n### 📚 Documentation\n- Comprehensive TOOLS.md with all tools and GitHub links\n- Shortened README.md linking to TOOLS.md\n\nReconRanger is now ready for professional bug bounty hunters and security researchers!",
+  "draft": false,
+  "prerelease": false
+}

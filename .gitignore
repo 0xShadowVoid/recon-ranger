@@ -2,6 +2,7 @@
 .reconranger/
 ~/.reconranger/
 api_keys.json
+keys.json
 *.key
 *.secret
 
@@ -11,8 +12,12 @@ __pycache__/
 *$py.class
 
 # Logs
-/var/log/reconranger*.log
+logs/
 *.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
 
 # Temp files
 *.tmp
@@ -20,11 +25,18 @@ __pycache__/
 *~
 
 # v2.0 additions
+venv/
+env/
+.venv/
 automation/
-scripts/
-self-settings/
-personal/
-notes/
-.github/
 .env/
 .vscode/
+
+# Packaging
+dist/
+build/
+*.egg-info/
+
+# Development artifacts
+notes/
+personal/

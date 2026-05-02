@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-🔑 ApiKeyMaster v4.0 - SECURE Unified API Key Manager
+🔑 ApiKeyMaster v4.1 - SECURE Unified API Key Manager
 ✅ 600 permissions enforced on all key storage
 ✅ Automatic config generation for all 8 providers
+✅ Export API keys to shell profiles or PowerShell for tool visibility
 ✅ Timestamped audit logging
 """
 
@@ -14,6 +15,8 @@ import re
 from pathlib import Path
 from typing import Dict
 import datetime
+
+VERSION = "4.1"
 
 class Colors:
     GREEN = '\033[92m'; YELLOW = '\033[93m'; RED = '\033[91m'
@@ -260,6 +263,93 @@ class ApiKeyMaster:
         print(f"\n{Colors.BLUE}Secure storage:{Colors.RESET} {self.config_file} {Colors.BLUE}(permissions: 600){Colors.RESET}")
         print(f"{Colors.RED}⚠️  SECURITY:{Colors.RESET} Never share this file or commit to git!")
 
+    def _format_export_lines(self, full: bool = False) -> list:
+        lines = []
+        for name, cfg in self.providers.items():
+            env = cfg.get("env")
+            if not env:
+                continue
+            val = self.keys.get(name)
+            if not val:
+                continue
+            if full:
+                v = val
+            else:
+                v = val[:4] + "*" * max(0, len(val) - 8) if len(val) > 8 else "*" * len(val)
+
+            if os.name == 'nt':
+                lines.append(f'$env:{env} = "{v}"')
+            else:
+                lines.append(f'export {env}="{v}"')
+        return lines
+
+    def print_exports(self, full: bool = False):
+        """Print shell export / PowerShell set commands for configured keys.
+        By default values are masked; pass full=True to print full values.
+        """
+        if not self.keys:
+            print(f"{Colors.YELLOW}No keys configured to export{Colors.RESET}")
+            return
+        print("\n" + f"{Colors.BLUE}{'EXPORT COMMANDS (masked by default)':^78}{Colors.RESET}")
+        print("=" * 78 + "\n")
+        for line in self._format_export_lines(full=full):
+            print(line)
+
+    def export_to_shell(self, full: bool = False):
+        """Write export lines into common shell profile files (or PowerShell profiles on Windows).
+        This makes API keys available to child processes and tools launched from interactive shells.
+        WARNING: exporting plaintext keys to shell profiles is a security risk. Use with caution.
+        """
+        if not self.keys:
+            print(f"{Colors.YELLOW}No keys configured to export{Colors.RESET}")
+            return
+
+        export_entries = {}
+        for name, cfg in self.providers.items():
+            env = cfg.get("env")
+            if env and name in self.keys:
+                export_entries[env] = self.keys[name] if full else self.keys[name]
+
+        if os.name == 'nt':
+            # PowerShell profiles (both WindowsPowerShell and PowerShell)
+            profiles = [
+                Path.home() / 'Documents' / 'PowerShell' / 'Microsoft.PowerShell_profile.ps1',
+                Path.home() / 'Documents' / 'WindowsPowerShell' / 'Microsoft.PowerShell_profile.ps1'
+            ]
+            for p in profiles:
+                p.parent.mkdir(parents=True, exist_ok=True)
+                txt = p.read_text() if p.exists() else ''
+                changed = False
+                for env, val in export_entries.items():
+                    line = f'$env:{env} = "{val}"\n'
+                    if re.search(rf'\$env:{re.escape(env)}\s*=\s*".*"', txt):
+                        txt = re.sub(rf'\$env:{re.escape(env)}\s*=\s*".*"', line.strip(), txt)
+                        changed = True
+                    else:
+                        txt += f"\n# Added by ApiKeyMaster {VERSION}\n" + line
+                        changed = True
+                if changed:
+                    p.write_text(txt)
+                    print(f"  {Colors.GREEN}✓{Colors.RESET} Updated PowerShell profile: {p}")
+        else:
+            profiles = [Path.home() / '.bashrc', Path.home() / '.profile']
+            for p in profiles:
+                txt = p.read_text() if p.exists() else ''
+                changed = False
+                for env, val in export_entries.items():
+                    line = f'export {env}="{val}"\n'
+                    if re.search(rf'export\s+{re.escape(env)}\s*=.*', txt):
+                        txt = re.sub(rf'export\s+{re.escape(env)}\s*=.*', line.strip(), txt)
+                        changed = True
+                    else:
+                        txt += f"\n# Added by ApiKeyMaster {VERSION}\n" + line
+                        changed = True
+                if changed:
+                    p.write_text(txt)
+                    print(f"  {Colors.GREEN}✓{Colors.RESET} Updated shell profile: {p}")
+
+        print(f"\n{Colors.YELLOW}⚠{Colors.RESET} Keys exported to shell profiles. They will be available in new shells.\n      Do NOT commit these profile files or expose them publicly.")
+
 def main():
     import argparse
     parser = argparse.ArgumentParser(
@@ -276,6 +366,9 @@ Security Best Practices:
     parser.add_argument("--configure", action="store_true", help="Interactive configuration wizard")
     parser.add_argument("--apply", action="store_true", help="Apply keys to tool configurations")
     parser.add_argument("--list", action="store_true", help="List masked keys")
+    parser.add_argument("--export", action="store_true", help="Export keys to shell/profile so tools can see them (writes to ~/.bashrc or PowerShell profile)")
+    parser.add_argument("--print-exports", action="store_true", help="Print masked shell export/PowerShell set commands")
+    parser.add_argument("--print-full-exports", action="store_true", help="Print full shell export/PowerShell set commands (UNMASKED)")
     
     args = parser.parse_args()
     
@@ -287,6 +380,12 @@ Security Best Practices:
         master.apply_configs()
     elif args.list:
         master.list_keys()
+    elif args.print_exports:
+        master.print_exports(full=False)
+    elif args.print_full_exports:
+        master.print_exports(full=True)
+    elif args.export:
+        master.export_to_shell(full=True)
     else:
         parser.print_help()
         print("\n💡 Quick start:")
