@@ -1,6 +1,64 @@
 # 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
 > **Made by 0xShadowVoid**
 
+ReconRanger is a lightweight, surgical reconnaissance toolkit and manager that focuses on installing and orchestrating a curated set of high-quality recon tools.
+
+Summary
+-------
+- **Version:** 3.1
+- **Philosophy:** Install the right tools, not the most tools — surgical, reproducible recon workflows.
+- **Platform:** Linux (Kali, Parrot, Ubuntu/Debian compatible). WSL is supported for testing.
+
+Quick Links
+-----------
+- Full documentation, guides, and reports: [docs/README.md](docs/README.md)
+- Latest release: `v3.1`
+
+Quick Start
+-----------
+Install prerequisites and fix system deps (run as non-root or via sudo when required):
+```bash
+python3 reconranger.py --fix-deps
+```
+
+Configure API keys (interactive):
+```bash
+python3 ApiKeyMaster.py --configure
+python3 ApiKeyMaster.py --print-exports   # preview env exports (masked)
+```
+
+Install core toolkit (recommended):
+```bash
+python3 reconranger.py -c core
+```
+
+Useful Commands
+---------------
+- List tools: `python3 reconranger.py --list`
+- Categories: `python3 reconranger.py --categories`
+- Install specific tools: `python3 reconranger.py -t subfinder httpx`
+- Check installation status: `python3 reconranger.py --check`
+
+Why keep docs/ and root README
+--------------------------------
+- `README.md` (this file): short, friendly project landing for GitHub.
+- `docs/`: full manuals, validation reports, and long-form generated artifacts (keeps repository root clean while retaining all documentation).
+
+Security & Privacy
+------------------
+- Do NOT commit API keys. `ApiKeyMaster` stores keys under `~/.reconranger/` with strict permissions.
+- If you use `--export` to write keys into shell profiles, be aware that plaintext keys in shell profiles are a security risk.
+
+Contributing
+------------
+See the full contributor guide and developer workflows in [docs/README.md](docs/README.md#developer-workflows).
+
+License
+-------
+This software is intended for authorized security testing and research. See LICENSE.txt for details.
+# 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
+> **Made by 0xShadowVoid**
+
 Python rewrite with 13-tool surgical core covering 95% of recon workflows. Zero root required, auto-rollback protection, 5-minute installs. Install 13 tools, not 61. Recon surgically, not sprawled. Transforms from simple tool installer into surgical recon workflow engine - optimized for Linux.
 
 ---
