@@ -25,7 +25,6 @@ def save_tools(tools):
 
 def main():
     tools = load_tools()
-    installer = ReconRangerInstaller(tools)
     system = SystemManager()
     key_manager = KeyManager()
     logger = setup_logging()
@@ -185,7 +184,9 @@ Examples:
         # Ensure dependencies first
         system.install_system_dependencies()
         system.check_go()
-        
+        # Re-instantiate installer now that `tools` may have been supplemented
+        installer = ReconRangerInstaller(tools)
+
         env = key_manager.get_env_vars()
         for t in targets:
             installer.install_tool(t, env_vars=env)

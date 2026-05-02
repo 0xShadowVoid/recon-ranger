@@ -90,6 +90,11 @@ class ReconRangerInstaller:
 
     def _install_go(self, name: str, cfg: Dict) -> bool:
         package = cfg["package"]
+        # Newer Go versions require an explicit module version when using
+        # `go install` outside a module. If the package string doesn't
+        # include a version suffix, append `@latest` so installs succeed.
+        if "@" not in package:
+            package = f"{package}@latest"
         binary = cfg["binary"]
         if self._run_cmd(["go", "install", package]):
             src = self.go_bin / binary
@@ -101,6 +106,10 @@ class ReconRangerInstaller:
     def _install_python(self, name: str, cfg: Dict) -> bool:
         package = cfg["package"]
         binary = cfg["binary"]
+        # Warn about Python 3.13+ removal of some deprecated stdlib modules
+        # (e.g., `cgi`) which may break building older packages like htmlmin.
+        if sys.version_info >= (3, 13):
+            print("⚠️ Detected Python >= 3.13. Some packages may fail to build (missing stdlib modules like 'cgi'). Consider using Python 3.11 for compatibility.")
         if self._run_cmd([sys.executable, "-m", "pip", "install", "--upgrade", package, "--break-system-packages"]):
             # Pip usually puts binaries in /usr/local/bin or ~/.local/bin
             # We'll try to find it and ensure it's linked

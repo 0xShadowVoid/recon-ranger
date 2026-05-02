@@ -143,4 +143,56 @@
     "category": "web",
     "example": "x8 -u https://example.com/ -w wordlist.txt"
   }
+  ,
+  "sublist3r": {
+    "type": "python",
+    "package": "sublist3r==1.0",
+    "binary": "sublist3r",
+    "description": "Fast subdomain enumeration using OSINT sources",
+    "category": "core",
+    "example": "sublist3r -d target.com -o subs.txt"
+  },
+  "subdomainizer": {
+    "type": "git",
+    "repo": "https://github.com/nsonaniya2010/SubDomainizer.git",
+    "path": "/opt/SubDomainizer",
+    "binary": "subdomainizer",
+    "entrypoint": "/opt/SubDomainizer/SubDomainizer.py",
+    "requirements": ["-r", "/opt/SubDomainizer/requirements.txt"],
+    "description": "Find interesting subdomains and secrets in external resources",
+    "category": "core",
+    "example": "subdomainizer -u https://target.com -o results.txt"
+  },
+  "assetfinder": {
+    "type": "go",
+    "package": "github.com/tomnomnom/assetfinder",
+    "binary": "assetfinder",
+    "description": "Find subdomains from Certificate Transparency logs",
+    "category": "core",
+    "example": "assetfinder --subs-only target.com"
+  },
+  "dnsx": {
+    "type": "go",
+    "package": "github.com/projectdiscovery/dnsx/cmd/dnsx",
+    "binary": "dnsx",
+    "description": "Multi-purpose DNS toolkit for enumeration and resolution",
+    "category": "core",
+    "example": "cat subs.txt | dnsx -a -resp -silent"
+  },
+  "gospider": {
+    "type": "go",
+    "package": "github.com/jaeles-project/gospider",
+    "binary": "gospider",
+    "description": "Fast web spider for endpoint discovery",
+    "category": "core",
+    "example": "gospider -s https://target.com -o output"
+  },
+  "subzy": {
+    "type": "go",
+    "package": "github.com/PentestPad/subzy",
+    "binary": "subzy",
+    "description": "Fast subdomain takeover scanner",
+    "category": "core",
+    "example": "subzy -list subs.txt"
+  }
 }

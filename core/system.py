@@ -107,11 +107,12 @@ class SystemManager:
     def ensure_global_path(self, binary_path: Path, binary_name: str):
         """Symlink binary to /usr/local/bin for global access"""
         target = Path("/usr/local/bin") / binary_name
-        if not target.exists() or not target.is_symlink():
-            try:
-                if target.exists():
-                    subprocess.run(["sudo", "rm", "-f", str(target)], check=True)
-                subprocess.run(["sudo", "ln", "-s", str(binary_path), str(target)], check=True)
-                subprocess.run(["sudo", "chmod", "+x", str(target)], check=True)
-            except Exception as e:
-                print(f"⚠️ Failed to create symlink for {binary_name}: {e}")
+        # If an existing file or symlink (including dangling symlinks) is
+        # present at the target, remove it first so `ln -s` won't fail.
+        try:
+            if target.exists() or target.is_symlink():
+                subprocess.run(["sudo", "rm", "-f", str(target)], check=True)
+            subprocess.run(["sudo", "ln", "-s", str(binary_path), str(target)], check=True)
+            subprocess.run(["sudo", "chmod", "+x", str(target)], check=True)
+        except Exception as e:
+            print(f"⚠️ Failed to create symlink for {binary_name}: {e}")
