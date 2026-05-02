@@ -1,61 +1,22 @@
-# 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
-> **Made by 0xShadowVoid**
 
-ReconRanger is a lightweight, surgical reconnaissance toolkit and manager that focuses on installing and orchestrating a curated set of high-quality recon tools.
+# 🦅 ReconRanger — Surgical Recon Toolkit
 
-Summary
--------
-- **Version:** 3.1
-- **Philosophy:** Install the right tools, not the most tools — surgical, reproducible recon workflows.
-- **Platform:** Linux (Kali, Parrot, Ubuntu/Debian compatible). WSL is supported for testing.
+Quick overview and full documentation
 
-Quick Links
------------
-- Full documentation, guides, and reports: [docs/README.md](docs/README.md)
-- Latest release: `v3.1`
+This repository contains ReconRanger, a surgical reconnaissance toolkit and manager.
 
-Quick Start
------------
-Install prerequisites and fix system deps (run as non-root or via sudo when required):
-```bash
-python3 reconranger.py --fix-deps
-```
+For full guides, installation instructions, validation reports, and developer docs, see:
 
-Configure API keys (interactive):
-```bash
-python3 ApiKeyMaster.py --configure
-python3 ApiKeyMaster.py --print-exports   # preview env exports (masked)
-```
+- docs/README.md
 
-Install core toolkit (recommended):
-```bash
-python3 reconranger.py -c core
-```
+Quick commands:
 
-Useful Commands
----------------
 - List tools: `python3 reconranger.py --list`
-- Categories: `python3 reconranger.py --categories`
-- Install specific tools: `python3 reconranger.py -t subfinder httpx`
-- Check installation status: `python3 reconranger.py --check`
+- Configure API keys: `python3 ApiKeyMaster.py --configure`
+- Install core toolkit: `python3 reconranger.py -c core`
 
-Why keep docs/ and root README
---------------------------------
-- `README.md` (this file): short, friendly project landing for GitHub.
-- `docs/`: full manuals, validation reports, and long-form generated artifacts (keeps repository root clean while retaining all documentation).
+If you want the full README and long reports, open `docs/README.md`.
 
-Security & Privacy
-------------------
-- Do NOT commit API keys. `ApiKeyMaster` stores keys under `~/.reconranger/` with strict permissions.
-- If you use `--export` to write keys into shell profiles, be aware that plaintext keys in shell profiles are a security risk.
-
-Contributing
-------------
-See the full contributor guide and developer workflows in [docs/README.md](docs/README.md#developer-workflows).
-
-License
--------
-This software is intended for authorized security testing and research. See LICENSE.txt for details.
 # 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
 > **Made by 0xShadowVoid**
 
