@@ -65,6 +65,7 @@ Examples:
     # System
     group_sys = parser.add_argument_group("System")
     group_sys.add_argument("--fix-deps", action="store_true", help="Auto-fix system dependencies")
+    parser.add_argument("--categories", action="store_true", help="List available categories and counts")
 
     args = parser.parse_args()
 
@@ -117,6 +118,13 @@ Examples:
         print("-" * 75)
         for i, (name, cfg) in enumerate(tools.items(), 1):
             print(f"{i:<3} {name:<18} {cfg['category']:<12} {cfg['description'][:40]}")
+        return
+
+    if args.categories:
+        from core.config import CATEGORIES
+        print("\nAvailable Categories:")
+        for name, items in CATEGORIES.items():
+            print(f"- {name}: {len(items)} tools")
         return
 
     # 4. Installation Logic

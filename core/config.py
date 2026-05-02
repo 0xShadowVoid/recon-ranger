@@ -2,8 +2,8 @@
 from typing import Dict, Any, Optional
 
 # Version information
-VERSION = "2.0"
-DESCRIPTION = "ReconRanger v2.0 - Python Rewrite with Surgical Core Toolkit"
+VERSION = "2.1"
+DESCRIPTION = "ReconRanger v2.1 - Updated categories and cargo support"
 
 # Only essential fields required
 TOOL_SCHEMA = {
@@ -20,15 +20,16 @@ CATEGORIES = {
         "arjun", "subzy", "nuclei", "amass"
     ],
     "subdomains": ["shuffledns", "github-subdomains"],
-    "js": ["linkfinder", "jsfinder", "jsleak", "jsecret"],
+    "js": ["linkfinder", "jsfinder", "jsleak", "jsecret", "jsluice"],
     "osint": ["gau", "waybackurls", "githound", "github-dorks", "paramspider"],
     "web": ["kiterunner", "cewl"],
-    "vuln": ["xsstrike", "dalfox", "sqlmap", "ghauri", "wafw00f", "graphw00f"],
+    "vuln": ["xsstrike", "dalfox", "sqlmap", "ghauri", "wafw00f", "graphw00f", "dotdotpwn", "graphqlmap", "nosqlmap", "cvinder", "aidor", "xspear", "metasploit-framework"],
     "cloud": ["cloud_enum", "s3scanner"],
-    "takeover": ["subjack", "subover"],
+    "takeover": ["subjack"],
     "ports": ["masscan", "metabigor"],
     "cms": ["wpscan", "droopescan", "nikto"],
-    "utils": ["anew", "gf", "seclists", "interactsh", "reconftw"]
+    "utils": ["anew", "gf", "seclists", "interactsh", "reconftw", "uro", "enumrust", "dirsearch"],
+    "osint": ["gau", "waybackurls", "githound", "github-dorks", "paramspider", "virustotalx", "jeeves"]
 }
 
 # All 61 recon tools - surgical selection
@@ -494,6 +495,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "repo": "https://github.com/droope/droopescan.git",
         "path": "/opt/droopescan",
         "binary": "droopescan",
+        "description": "CMS scanner for Drupal and related platforms",
         "example": "python3 droopescan scan https://target.com",
     },
     "subzy": {
@@ -549,7 +551,7 @@ TOOL_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "example": "./reconftw.sh -d target.com",
     },
     "enumrust": {
-        "type": "git",
+        "type": "cargo",
         "repo": "https://github.com/KingOfBugbounty/enumrust.git",
         "path": "/opt/enumrust",
         "binary": "enumrust",

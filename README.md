@@ -1,4 +1,4 @@
-# 🦅 ReconRanger v3.0 - Surgical Recon Toolkit for Linux
+# 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
 > **Made by 0xShadowVoid**
 
 Python rewrite with 13-tool surgical core covering 95% of recon workflows. Zero root required, auto-rollback protection, 5-minute installs. Install 13 tools, not 61. Recon surgically, not sprawled. Transforms from simple tool installer into surgical recon workflow engine - optimized for Linux.
