@@ -1,3 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Logs and backups
+logs/
+*.log
+*.bak
+~*
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+
+# Go build artifacts (local)
+go/bin/
+go/pkg/
+
+# User-specific reconranger config (do NOT commit secrets)
+.reconranger/
+*.key
+
+# Large files
+# Add any large binaries you don't want in git
+# Example: *.zip
 # API keys & secrets
 .reconranger/
 ~/.reconranger/
