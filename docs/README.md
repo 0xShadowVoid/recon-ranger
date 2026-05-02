@@ -59,7 +59,7 @@ This software is intended for authorized security testing and research. See LICE
 # 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
 > **Made by 0xShadowVoid**
 
-Python rewrite with 13-tool surgical core covering 95% of recon workflows. Zero root required, auto-rollback protection, 5-minute installs. Install 13 tools, not 61. Recon surgically, not sprawled. Transforms from simple tool installer into surgical recon workflow engine - optimized for Linux.
+Python rewrite with a surgical core toolkit covering the vast majority of common recon workflows. Zero root required, auto-rollback protection, 5-minute installs. Install the curated core tools for focused, reproducible recon workflows.
 
 ---
 

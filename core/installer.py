@@ -23,7 +23,22 @@ class ReconRangerInstaller:
         self.system = SystemManager()
         self.bin_dir = Path("/usr/local/bin")
         self.opt_dir = Path("/opt")
-        self.go_bin = Path.home() / "go" / "bin"
+        # Determine Go bin directory dynamically (use GOPATH if available)
+        self.go_bin = self._detect_go_bin()
+
+    def _detect_go_bin(self) -> Path:
+        """Return the directory where `go install` places binaries.
+
+        Tries `go env GOPATH` then falls back to ~/go/bin.
+        """
+        try:
+            import subprocess
+            res = subprocess.run(["go", "env", "GOPATH"], capture_output=True, text=True)
+            if res.returncode == 0 and res.stdout.strip():
+                return Path(res.stdout.strip()) / "bin"
+        except Exception:
+            pass
+        return Path.home() / "go" / "bin"
 
     def _run_cmd(self, cmd: List[str], cwd: Optional[Path] = None, env: Optional[Dict] = None) -> bool:
         try:

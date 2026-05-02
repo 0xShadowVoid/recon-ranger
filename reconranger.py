@@ -60,7 +60,7 @@ Examples:
     group_reg.add_argument("--add-tool", action="store_true", help="Add a new tool to the registry")
     group_reg.add_argument("--edit-tool", help="Edit an existing tool in the registry")
     group_reg.add_argument("--delete-tool", help="Delete a tool from the registry")
-    group_reg.add_argument("-l", "--list", action="store_true", help="List all tools in registry")
+    group_reg.add_argument("-l", "--list", "-list", action="store_true", help="List all tools in registry")
 
     # System
     group_sys = parser.add_argument_group("System")
@@ -68,6 +68,37 @@ Examples:
     parser.add_argument("--categories", action="store_true", help="List available categories and counts")
 
     args = parser.parse_args()
+
+    def interactive_menu():
+        """Simple interactive menu shown when no CLI args provided."""
+        while True:
+            print("\nReconRanger Interactive Menu:\n1) List tools\n2) List categories\n3) Install a category\n4) Install specific tools (space-separated)\n5) Install core\n6) Exit")
+            choice = input("Choose an option (1-6): ").strip()
+            if choice == "1":
+                args.list = True
+                return
+            if choice == "2":
+                args.categories = True
+                return
+            if choice == "3":
+                cat = input("Category name: ").strip()
+                args.category = cat
+                return
+            if choice == "4":
+                t = input("Tools (space-separated): ").strip().split()
+                args.tools = t
+                return
+            if choice == "5":
+                args.category = "core"
+                return
+            if choice == "6":
+                print("👋 Exiting interactive mode.")
+                sys.exit(0)
+            print("Invalid choice, try again.")
+
+    # If no args provided, enter interactive menu
+    if len(sys.argv) == 1:
+        interactive_menu()
 
     # 1. System Fix
     if args.fix_deps:
