@@ -1,4 +1,4 @@
-"""System compatibility and dependency management - ReconRanger v3.0"""
+"""System compatibility and dependency management - ReconRanger v3.1"""
 import os
 import shutil
 import subprocess

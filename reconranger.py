@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🦅 ReconRanger v3.0 - Surgical Recon Toolkit & Tool Manager
+🦅 ReconRanger v3.1 - Surgical Recon Toolkit & Tool Manager
 Developed by 0xShadowVoid
 """
 
@@ -31,7 +31,7 @@ def main():
     logger = setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="🦅 ReconRanger v3.0 - Surgical Recon Toolkit",
+        description="🦅 ReconRanger v3.1 - Surgical Recon Toolkit",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -163,7 +163,21 @@ Examples:
     if args.install_all:
         targets = list(tools.keys())
     elif args.category:
-        targets = [n for n, c in tools.items() if c['category'] == args.category]
+        # Prefer authoritative category lists from core.config when available.
+        try:
+            from core.config import CATEGORIES, TOOL_DEFINITIONS
+            category_names = CATEGORIES.get(args.category)
+        except Exception:
+            category_names = None
+
+        if category_names:
+            targets = list(category_names)
+            # Supplement registry with definitions for missing tools (runtime only)
+            for n in category_names:
+                if n not in tools and n in TOOL_DEFINITIONS:
+                    tools[n] = TOOL_DEFINITIONS[n]
+        else:
+            targets = [n for n, c in tools.items() if c.get('category') == args.category]
     elif args.tools:
         targets = args.tools
 

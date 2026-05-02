@@ -9,6 +9,12 @@ Summary
 - **Philosophy:** Install the right tools, not the most tools — surgical, reproducible recon workflows.
 - **Platform:** Linux (Kali, Parrot, Ubuntu/Debian compatible). WSL is supported for testing.
 
+Registry Summary
+----------------
+- **Total tools in registry:** 17
+- **Categories present:** 6 (core, vuln, web, osint, utils, automation)
+- **Core toolkit (8 tools):** bbot, subfinder, amass, httpx, nuclei, katana, ffuf, naabu
+
 Quick Links
 -----------
 - Full documentation, guides, and reports: [docs/README.md](docs/README.md)
@@ -110,7 +116,7 @@ python3 reconranger.py -t subfinder bbot nuclei
 ---
 
 ## 🛠️ Tool Management
-Recon-Ranger v3.0 makes it easy to maintain your own custom toolkit:
+Recon-Ranger v3.1 makes it easy to maintain your own custom toolkit:
 - **List Tools:** `python3 reconranger.py --list`
 - **Add Tool:** `python3 reconranger.py --add-tool`
 - **Delete Tool:** `python3 reconranger.py --delete-tool <name>`
