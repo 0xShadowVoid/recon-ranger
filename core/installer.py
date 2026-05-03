@@ -110,6 +110,7 @@ class ReconRangerInstaller:
         # (e.g., `cgi`) which may break building older packages like htmlmin.
         if sys.version_info >= (3, 13):
             print("⚠️ Detected Python >= 3.13. Some packages may fail to build (missing stdlib modules like 'cgi'). Consider using Python 3.11 for compatibility.")
+        # First attempt: normal pip install
         if self._run_cmd([sys.executable, "-m", "pip", "install", "--upgrade", package, "--break-system-packages"]):
             # Pip usually puts binaries in /usr/local/bin or ~/.local/bin
             # We'll try to find it and ensure it's linked
@@ -117,6 +118,36 @@ class ReconRangerInstaller:
             if pip_bin:
                 self.system.ensure_global_path(Path(pip_bin), binary)
                 return True
+        # If pip install failed and we're on Python >=3.13, try a fallback
+        if sys.version_info >= (3, 13):
+            # Prefer a system python3.11 if available: create temporary venv and install there
+            py311 = shutil.which("python3.11")
+            if py311:
+                venv_dir = Path("/tmp") / f"rr_venv_{name}"
+                try:
+                    print(f"🔁 Attempting fallback install for {name} using python3.11 venv at {venv_dir}")
+                    if venv_dir.exists():
+                        shutil.rmtree(venv_dir)
+                    if not self._run_cmd([py311, "-m", "venv", str(venv_dir)]):
+                        raise RuntimeError("failed to create venv")
+                    pip_path = venv_dir / "bin" / "pip"
+                    if not self._run_cmd([str(pip_path), "install", "--upgrade", package]):
+                        raise RuntimeError("pip install in venv failed")
+                    # try to locate the binary inside venv
+                    bin_path = venv_dir / "bin" / binary
+                    if bin_path.exists():
+                        self.system.ensure_global_path(bin_path, binary)
+                        return True
+                    # if binary not in venv bin, try locating via pip-installed scripts
+                    possible = shutil.which(binary)
+                    if possible:
+                        self.system.ensure_global_path(Path(possible), binary)
+                        return True
+                except Exception as e:
+                    logger.error(f"Fallback venv install failed for {name}: {e}")
+            else:
+                print("⚠️ python3.11 not found on system; cannot attempt venv fallback. Consider installing python3.11 or using a pyenv-managed interpreter.")
+
         return False
 
     def _install_git(self, name: str, cfg: Dict) -> bool:

@@ -49,7 +49,17 @@ class SystemManager:
         ]
         
         print("⚙️ Installing system dependencies...")
-        subprocess.run(["sudo", "apt-get", "update", "-qq"], check=False)
+        # Run apt-get update but do not fail hard if update cannot complete
+        r = subprocess.run(["sudo", "apt-get", "update", "-qq"], check=False, capture_output=True, text=True)
+        if r.returncode != 0:
+            print("⚠️ `apt-get update` failed. The system's package sources may be outdated (e.g., WSL Kali).\n  You can fix this by updating /etc/apt/sources.list or running apt-get update manually.\n  Continuing to attempt package installs, but they may fail.")
+            # log debug output
+            try:
+                import logging
+                logging.getLogger().debug(f"apt-get update output: {r.stdout}\n{r.stderr}")
+            except Exception:
+                pass
+
         subprocess.run(["sudo", "apt-get", "install", "-y", "-qq"] + deps, check=False)
 
     def check_go(self) -> bool:
