@@ -117,12 +117,30 @@ class SystemManager:
     def ensure_global_path(self, binary_path: Path, binary_name: str):
         """Symlink binary to /usr/local/bin for global access"""
         target = Path("/usr/local/bin") / binary_name
-        # If an existing file or symlink (including dangling symlinks) is
-        # present at the target, remove it first so `ln -s` won't fail.
+        # Resolve the actual source executable. Prefer an existing path
+        # (e.g., go/bin or venv scripts). If the provided `binary_path`
+        # does not exist, fall back to `shutil.which` to locate it.
         try:
+            import shutil
+            src = Path(binary_path)
+            if not src.exists():
+                found = shutil.which(binary_name)
+                if found:
+                    src = Path(found)
+                else:
+                    print(f"⚠️ Skipping symlink for {binary_name}: source not found ({binary_path})")
+                    return
+
+            # Ensure source is executable first (chmod the real file)
+            try:
+                subprocess.run(["sudo", "chmod", "+x", str(src)], check=True)
+            except Exception:
+                # Non-fatal: we still attempt to create the symlink below
+                pass
+
+            # Remove existing target (file or symlink), then create new symlink
             if target.exists() or target.is_symlink():
                 subprocess.run(["sudo", "rm", "-f", str(target)], check=True)
-            subprocess.run(["sudo", "ln", "-s", str(binary_path), str(target)], check=True)
-            subprocess.run(["sudo", "chmod", "+x", str(target)], check=True)
+            subprocess.run(["sudo", "ln", "-s", str(src), str(target)], check=True)
         except Exception as e:
             print(f"⚠️ Failed to create symlink for {binary_name}: {e}")
