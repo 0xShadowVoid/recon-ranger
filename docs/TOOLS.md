@@ -1,6 +1,6 @@
 # 🛠️ ReconRanger - Complete Tool Documentation
 
-> **61 professional security tools** organized by category with direct repository links
+> **60 professional security tools** organized by category with direct repository links
 
 ---
 

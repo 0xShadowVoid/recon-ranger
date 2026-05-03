@@ -14,7 +14,7 @@ Registry Summary
 - **Tools in active registry (`tools.json`):** 23
 - **Categories present:** 11
 - **Core toolkit (canonical stack):** See [BugBounty CLI Core Stack](BugBounty_CLI_Core-Stack.md) for the curated core set used by ReconRanger
-- **Full tool reference (all supported tools):** see [docs/TOOLS.md](TOOLS.md) (comprehensive table of ~61 tools and per-category breakdown)
+- **Full tool reference (all supported tools):** see [docs/TOOLS.md](TOOLS.md) (comprehensive table of 60 tools and per-category breakdown)
 
 Quick Links
 -----------
