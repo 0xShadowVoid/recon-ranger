@@ -85,8 +85,8 @@ Python rewrite with a surgical core toolkit covering the vast majority of common
 ### 1. Installation
 ```bash
 # Clone the repository
-git clone https://github.com/0xShadowVoid/Recon-Ranger.git
-cd Recon-Ranger
+git clone https://github.com/0xShadowVoid/recon-ranger.git
+cd recon-ranger
 
 # Fix dependencies and setup environment
 python3 reconranger.py --fix-deps
@@ -116,7 +116,7 @@ python3 reconranger.py -t subfinder bbot nuclei
 ---
 
 ## 🛠️ Tool Management
-Recon-Ranger v3.1 makes it easy to maintain your own custom toolkit:
+recon-ranger v3.1 makes it easy to maintain your own custom toolkit:
 - **List Tools:** `python3 reconranger.py --list`
 - **Add Tool:** `python3 reconranger.py --add-tool`
 - **Delete Tool:** `python3 reconranger.py --delete-tool <name>`
