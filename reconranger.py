@@ -188,8 +188,24 @@ Examples:
         installer = ReconRangerInstaller(tools)
 
         env = key_manager.get_env_vars()
+        successes = []
+        failures = []
         for t in targets:
-            installer.install_tool(t, env_vars=env)
+            ok = installer.install_tool(t, env_vars=env)
+            if ok:
+                successes.append(t)
+            else:
+                failures.append(t)
+
+        # Summary of install results
+        print("\n🔔 Installation Summary")
+        print(f"- Requested: {len(targets)} tools")
+        print(f"- Succeeded: {len(successes)}")
+        print(f"- Failed: {len(failures)}")
+        if successes:
+            print(f"  ✅ Successes: {', '.join(successes)}")
+        if failures:
+            print(f"  ❌ Failures: {', '.join(failures)}")
         return
 
     if args.check:

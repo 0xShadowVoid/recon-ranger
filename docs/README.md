@@ -11,9 +11,9 @@ Summary
 
 Registry Summary
 ----------------
-- **Total tools in registry:** 17
-- **Categories present:** 6 (core, vuln, web, osint, utils, automation)
-- **Core toolkit (8 tools):** bbot, subfinder, amass, httpx, nuclei, katana, ffuf, naabu
+- **Total tools in registry:** 23
+- **Categories present:** 11
+- **Core toolkit (15 tools):** bbot, subfinder, sublist3r, subdomainizer, assetfinder, dnsx, httpx, naabu, katana, gospider, ffuf, arjun, subzy, nuclei, amass
 
 Quick Links
 -----------
