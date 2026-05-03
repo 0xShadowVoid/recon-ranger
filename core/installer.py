@@ -1,4 +1,4 @@
-"""Modular Tool Installer - ReconRanger v3.1"""
+"""Modular Tool Installer - ReconRanger v3.1.1"""
 import os
 import sys
 import shutil

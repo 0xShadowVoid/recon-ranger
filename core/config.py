@@ -2,8 +2,8 @@
 from typing import Dict, Any, Optional
 
 # Version information
-VERSION = "3.1"
-DESCRIPTION = "ReconRanger v3.1 - Updated categories and cargo support"
+VERSION = "3.1.1"
+DESCRIPTION = "ReconRanger v3.1.1 - Updated categories and cargo support"
 
 # Only essential fields required
 TOOL_SCHEMA = {

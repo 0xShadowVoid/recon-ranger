@@ -1,4 +1,4 @@
-"""Centralized logging - ReconRanger v3.1"""
+"""Centralized logging - ReconRanger v3.1.1"""
 import logging
 import os
 from pathlib import Path

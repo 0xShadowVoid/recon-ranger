@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🦅 ReconRanger v3.1 - Surgical Recon Toolkit & Tool Manager
+🦅 ReconRanger v3.1.1 - Surgical Recon Toolkit & Tool Manager
 Developed by 0xShadowVoid
 """
 
@@ -30,7 +30,7 @@ def main():
     logger = setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="🦅 ReconRanger v3.1 - Surgical Recon Toolkit",
+        description="🦅 ReconRanger v3.1.1 - Surgical Recon Toolkit",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
