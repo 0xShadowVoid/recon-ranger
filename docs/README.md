@@ -11,9 +11,10 @@ Summary
 
 Registry Summary
 ----------------
-- **Total tools in registry:** 23
+- **Tools in active registry (`tools.json`):** 23
 - **Categories present:** 11
-- **Core toolkit (15 tools):** bbot, subfinder, sublist3r, subdomainizer, assetfinder, dnsx, httpx, naabu, katana, gospider, ffuf, arjun, subzy, nuclei, amass
+- **Core toolkit (canonical stack):** See [BugBounty CLI Core Stack](BugBounty_CLI_Core-Stack.md) for the curated core set used by ReconRanger
+- **Full tool reference (all supported tools):** see [docs/TOOLS.md](TOOLS.md) (comprehensive table of ~61 tools and per-category breakdown)
 
 Quick Links
 -----------
