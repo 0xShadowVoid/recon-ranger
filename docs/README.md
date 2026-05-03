@@ -1,11 +1,11 @@
-# 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
+# 🦅 ReconRanger v3.1.1 - Surgical Recon Toolkit for Linux
 > **Made by 0xShadowVoid**
 
 ReconRanger is a lightweight, surgical reconnaissance toolkit and manager that focuses on installing and orchestrating a curated set of high-quality recon tools.
 
 Summary
 -------
-- **Version:** 3.1
+- **Version:** 3.1.1
 - **Philosophy:** Install the right tools, not the most tools — surgical, reproducible recon workflows.
 - **Platform:** Linux (Kali, Parrot, Ubuntu/Debian compatible). WSL is supported for testing.
 
@@ -18,7 +18,7 @@ Registry Summary
 Quick Links
 -----------
 - Full documentation, guides, and reports: [docs/README.md](docs/README.md)
-- Latest release: `v3.1`
+- Latest release: `v3.1.1`
 
 Quick Start
 -----------
@@ -62,7 +62,7 @@ See the full contributor guide and developer workflows in [docs/README.md](docs/
 License
 -------
 This software is intended for authorized security testing and research. See LICENSE.txt for details.
-# 🦅 ReconRanger v3.1 - Surgical Recon Toolkit for Linux
+# 🦅 ReconRanger v3.1.1 - Surgical Recon Toolkit for Linux
 > **Made by 0xShadowVoid**
 
 Python rewrite with a surgical core toolkit covering the vast majority of common recon workflows. Zero root required, auto-rollback protection, 5-minute installs. Install the curated core tools for focused, reproducible recon workflows.
@@ -116,7 +116,7 @@ python3 reconranger.py -t subfinder bbot nuclei
 ---
 
 ## 🛠️ Tool Management
-recon-ranger v3.1 makes it easy to maintain your own custom toolkit:
+recon-ranger v3.1.1 makes it easy to maintain your own custom toolkit:
 - **List Tools:** `python3 reconranger.py --list`
 - **Add Tool:** `python3 reconranger.py --add-tool`
 - **Delete Tool:** `python3 reconranger.py --delete-tool <name>`
