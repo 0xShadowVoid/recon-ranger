@@ -144,8 +144,14 @@ recon-ranger v3.1 makes it easy to maintain your own custom toolkit:
 
 ---
 
+## Future Features
+- Go check file /docs/future_features.md
+
+---
+
 ## 🏷️ Topics
 `linux` `debian` `ubuntu` `kali` `security-tools` `vulnerability-scanning` `reconnaissance` `subdomain-enumeration` `parrot-os` `bug-bounty-hunting` `bug-bounty-tools`
+
 
 ---
 
