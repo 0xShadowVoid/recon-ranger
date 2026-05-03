@@ -145,8 +145,7 @@ recon-ranger v3.1 makes it easy to maintain your own custom toolkit:
 ---
 
 ## Future Features
-- Go check file /docs/future_features.md
-
+- Go check file [future features](https://github.com/0xShadowVoid/recon-ranger/blob/main/docs/future_features.md)
 ---
 
 ## 🏷️ Topics
