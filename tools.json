@@ -1,198 +1,674 @@
 {
-  "bbot": {
-    "type": "python",
-    "package": "bbot",
-    "binary": "bbot",
-    "description": "All-in-one recon framework (replaces 10+ tools; handles subdomains → ports → endpoints → vulns recursively)",
-    "category": "core",
-    "example": "bbot -t example.com -m subfinder httpx nuclei"
-  },
-  "subfinder": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
-    "binary": "subfinder",
-    "description": "Fast subdomain discovery using 30+ passive sources",
-    "category": "core",
-    "example": "subfinder -d target.com -silent -o subs.txt"
+  "aidor": {
+    "binary": "aidor",
+    "category": "vuln",
+    "description": "Automated Insecure Direct Object Reference scanner",
+    "entrypoint": "/opt/AIDOR/aidor.py",
+    "example": "aidor -u https://target.com",
+    "path": "/opt/AIDOR",
+    "repo": "https://github.com/abdulahadtheCyber-pixel/AIDOR.git",
+    "requirements": [
+      "-r",
+      "/opt/AIDOR/requirements.txt"
+    ],
+    "type": "git"
   },
   "amass": {
-    "type": "go",
-    "package": "github.com/owasp-amass/amass/v4/cmd/amass@latest",
     "binary": "amass",
+    "category": "core",
     "description": "In-depth attack surface mapping with graph visualization",
-    "category": "core",
-    "example": "amass enum -d target.com -o subs.txt"
-  },
-  "httpx": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/httpx/cmd/httpx@latest",
-    "binary": "httpx",
-    "description": "HTTP toolkit for probing, fingerprinting, and crawling",
-    "category": "core",
-    "example": "cat subs.txt | httpx -silent -status-code"
-  },
-  "nuclei": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",
-    "binary": "nuclei",
-    "description": "Fast vulnerability scanner with 10,000+ community templates",
-    "category": "core",
-    "post_install": "nuclei -ut -silent",
-    "example": "cat alive.txt | nuclei -t exposures/ -severity critical,high"
-  },
-  "katana": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/katana/cmd/katana@latest",
-    "binary": "katana",
-    "description": "Next-gen crawling and spidering framework",
-    "category": "core",
-    "example": "katana -u https://target.com -silent -depth 3 -js-crawl"
-  },
-  "ffuf": {
-    "type": "go",
-    "package": "github.com/ffuf/ffuf/v2@latest",
-    "binary": "ffuf",
-    "description": "Fast web fuzzer for directory brute-forcing",
-    "category": "core",
-    "example": "ffuf -w wordlist.txt -u https://target.com/FUZZ"
-  },
-  "naabu": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest",
-    "binary": "naabu",
-    "description": "Fast port scanner for network reconnaissance",
-    "category": "core",
-    "example": "naabu -host target.com -p 80,443,8080,8443"
-  },
-  "dalfox": {
-    "type": "go",
-    "package": "github.com/dalfox/dalfox/v2@latest",
-    "binary": "dalfox",
-    "description": "Modern XSS scanner and parameter analyzer",
-    "category": "vuln",
-    "example": "dalfox url https://target.com"
-  },
-  "arjun": {
-    "type": "git",
-    "repo": "https://github.com/s0md3v/Arjun.git",
-    "path": "/opt/Arjun",
-    "binary": "arjun",
-    "entrypoint": "/opt/Arjun/arjun.py",
-    "requirements": ["-r", "/opt/Arjun/requirements.txt"],
-    "description": "HTTP parameter discovery suite",
-    "category": "web",
-    "example": "python3 arjun.py -u https://target.com"
-  },
-  "waybackurls": {
-    "type": "go",
-    "package": "github.com/tomnomnom/waybackurls@latest",
-    "binary": "waybackurls",
-    "description": "Fetch all known URLs from Wayback Machine for a domain",
-    "category": "osint",
-    "example": "echo example.com | waybackurls"
-  },
-  "gau": {
-    "type": "go",
-    "package": "github.com/lc/gau/v2/cmd/gau@latest",
-    "binary": "gau",
-    "description": "Get all known URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl",
-    "category": "osint",
-    "example": "gau example.com"
+    "example": "amass enum -d target.com -o subs.txt",
+    "package": "github.com/owasp-amass/amass/v4/cmd/amass@latest",
+    "type": "go"
   },
   "anew": {
-    "type": "go",
-    "package": "github.com/tomnomnom/anew@latest",
     "binary": "anew",
+    "category": "utils",
     "description": "Append lines to a file, avoiding duplicates",
-    "category": "utils",
-    "example": "cat old.txt new.txt | anew all.txt"
+    "example": "cat old.txt new.txt | anew all.txt",
+    "package": "github.com/tomnomnom/anew@latest",
+    "type": "go"
   },
-  "notify": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/notify/cmd/notify@latest",
-    "binary": "notify",
-    "description": "Real-time notifications for all your recon workflow",
-    "category": "utils",
-    "example": "echo 'New subdomain found!' | notify -silent"
-  },
-  "interactsh-client": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest",
-    "binary": "interactsh-client",
-    "description": "Client for OOB interaction detection",
-    "category": "utils",
-    "example": "interactsh-client"
-  },
-  "pegpon": {
-    "type": "git",
-    "repo": "https://github.com/LABx-EnV/PEGPON.git",
-    "path": "/opt/PEGPON",
-    "binary": "pegpon",
-    "entrypoint": "/opt/PEGPON/pegpon",
-    "description": "Advanced Bash-based automation tool for subdomain enumeration, fuzzing, and web reconnaissance.",
-    "category": "automation",
-    "example": "pegpon -d example.com"
-  },
-  "x8": {
-    "type": "git",
-    "repo": "https://github.com/Sh1Yo/x8",
-    "path": "/opt/x8",
-    "binary": "x8",
-    "build_cmd": "cargo build --release",
-    "description": "Advanced parameter discovery tool written in Rust.",
+  "arjun": {
+    "binary": "arjun",
     "category": "web",
-    "example": "x8 -u https://example.com/ -w wordlist.txt"
-  }
-  ,
-  "sublist3r": {
-    "type": "python",
-    "package": "sublist3r==1.0",
-    "binary": "sublist3r",
-    "description": "Fast subdomain enumeration using OSINT sources",
-    "category": "core",
-    "example": "sublist3r -d target.com -o subs.txt"
-  },
-  "subdomainizer": {
-    "type": "git",
-    "repo": "https://github.com/nsonaniya2010/SubDomainizer.git",
-    "path": "/opt/SubDomainizer",
-    "binary": "subdomainizer",
-    "entrypoint": "/opt/SubDomainizer/SubDomainizer.py",
-    "requirements": ["-r", "/opt/SubDomainizer/requirements.txt"],
-    "description": "Find interesting subdomains and secrets in external resources",
-    "category": "core",
-    "example": "subdomainizer -u https://target.com -o results.txt"
+    "description": "HTTP parameter discovery suite",
+    "entrypoint": "/opt/Arjun/arjun.py",
+    "example": "python3 arjun.py -u https://target.com",
+    "path": "/opt/Arjun",
+    "repo": "https://github.com/s0md3v/Arjun.git",
+    "requirements": [
+      "-r",
+      "/opt/Arjun/requirements.txt"
+    ],
+    "type": "git"
   },
   "assetfinder": {
-    "type": "go",
-    "package": "github.com/tomnomnom/assetfinder",
     "binary": "assetfinder",
-    "description": "Find subdomains from Certificate Transparency logs",
     "category": "core",
-    "example": "assetfinder --subs-only target.com"
+    "description": "Find subdomains from Certificate Transparency logs",
+    "example": "assetfinder --subs-only target.com",
+    "package": "github.com/tomnomnom/assetfinder",
+    "type": "go"
+  },
+  "bbot": {
+    "binary": "bbot",
+    "category": "core",
+    "description": "All-in-one recon framework (replaces 10+ tools; handles subdomains \u00e2\u2020\u2019 ports \u00e2\u2020\u2019 endpoints \u00e2\u2020\u2019 vulns recursively)",
+    "example": "bbot -t example.com -m subfinder httpx nuclei",
+    "package": "bbot",
+    "type": "python"
+  },
+  "cewl": {
+    "apt": "cewl",
+    "binary": "cewl",
+    "category": "web",
+    "description": "Custom wordlist generator from website spidering",
+    "example": "cewl -d 2 -m 8 -w custom.txt https://target.com",
+    "package": "cewl",
+    "type": "apt"
+  },
+  "cloud_enum": {
+    "apt": null,
+    "binary": "cloud_enum",
+    "category": "cloud",
+    "description": "Multi-cloud OSINT for AWS/Azure/GCP public resources",
+    "example": "cloud_enum -k target -t aws,azure,gcp",
+    "package": "cloud_enum",
+    "type": "python"
+  },
+  "cvinder": {
+    "binary": "cvinder",
+    "category": "vuln",
+    "description": "CVE identifier and vulnerability finder",
+    "entrypoint": "/opt/CVINDER/cvinder.py",
+    "example": "cvinder -d target.com",
+    "path": "/opt/CVINDER",
+    "repo": "https://github.com/3a7/CVINDER.git",
+    "requirements": [
+      "-r",
+      "/opt/CVINDER/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "dalfox": {
+    "binary": "dalfox",
+    "category": "vuln",
+    "description": "Modern XSS scanner and parameter analyzer",
+    "example": "dalfox url https://target.com",
+    "package": "github.com/dalfox/dalfox/v2@latest",
+    "type": "go"
+  },
+  "dirsearch": {
+    "binary": "dirsearch",
+    "category": "utils",
+    "description": "Directory brute-forcing",
+    "entrypoint": "/opt/dirsearch/dirsearch.py",
+    "example": "python3 dirsearch.py -u https://target.com",
+    "path": "/opt/dirsearch",
+    "repo": "https://github.com/maurosoria/dirsearch.git",
+    "requirements": [
+      "-r",
+      "/opt/dirsearch/requirements.txt"
+    ],
+    "type": "git"
   },
   "dnsx": {
-    "type": "go",
-    "package": "github.com/projectdiscovery/dnsx/cmd/dnsx",
     "binary": "dnsx",
-    "description": "Multi-purpose DNS toolkit for enumeration and resolution",
     "category": "core",
-    "example": "cat subs.txt | dnsx -a -resp -silent"
+    "description": "Multi-purpose DNS toolkit for enumeration and resolution",
+    "example": "cat subs.txt | dnsx -a -resp -silent",
+    "package": "github.com/projectdiscovery/dnsx/cmd/dnsx",
+    "type": "go"
+  },
+  "dotdotpwn": {
+    "binary": "dotdotpwn",
+    "category": "vuln",
+    "description": "Path traversal fuzzer",
+    "entrypoint": "/opt/dotdotpwn/dotdotpwn.pl",
+    "example": "perl dotdotpwn.pl -h https://target.com",
+    "path": "/opt/dotdotpwn",
+    "repo": "https://github.com/wireghoul/dotdotpwn.git",
+    "type": "git"
+  },
+  "droopescan": {
+    "binary": "droopescan",
+    "category": "cms",
+    "description": "CMS scanner for Drupal and related platforms",
+    "example": "python3 droopescan scan https://target.com",
+    "path": "/opt/droopescan",
+    "repo": "https://github.com/droope/droopescan.git",
+    "type": "git"
+  },
+  "enumrust": {
+    "binary": "enumrust",
+    "build_cmd": "cargo build --release",
+    "category": "utils",
+    "description": "Rust-based enumeration tool",
+    "example": "./enumrust target.com",
+    "path": "/opt/enumrust",
+    "repo": "https://github.com/KingOfBugbounty/enumrust.git",
+    "type": "cargo"
+  },
+  "ffuf": {
+    "binary": "ffuf",
+    "category": "core",
+    "description": "Fast web fuzzer for directory brute-forcing",
+    "example": "ffuf -w wordlist.txt -u https://target.com/FUZZ",
+    "package": "github.com/ffuf/ffuf/v2@latest",
+    "type": "go"
+  },
+  "gau": {
+    "binary": "gau",
+    "category": "osint",
+    "description": "Get all known URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl",
+    "example": "gau example.com",
+    "package": "github.com/lc/gau/v2/cmd/gau@latest",
+    "type": "go"
+  },
+  "gf": {
+    "apt": null,
+    "binary": "gf",
+    "category": "utils",
+    "description": "Pattern finder for grep",
+    "example": "cat response.txt | gf s3",
+    "package": "github.com/tomnomnom/gf@latest",
+    "type": "go"
+  },
+  "ghauri": {
+    "binary": "ghauri",
+    "category": "vuln",
+    "description": "SQL injection scanner",
+    "entrypoint": "/opt/ghauri/ghauri.py",
+    "example": "python3 ghauri.py -u https://target.com",
+    "path": "/opt/ghauri",
+    "repo": "https://github.com/r0oth3x49/ghauri.git",
+    "requirements": [
+      "-r",
+      "/opt/ghauri/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "githound": {
+    "binary": "githound",
+    "build_cmd": "go build -o githound .",
+    "category": "osint",
+    "description": "GitHub secrets hunter and sensitive data finder",
+    "example": "githound --org target-org --keywords api_key,password",
+    "path": "/opt/git-hound",
+    "repo": "https://github.com/tillson/git-hound.git",
+    "type": "git"
+  },
+  "github-dorks": {
+    "binary": "github-dorks",
+    "category": "osint",
+    "description": "GitHub dorking for sensitive data exposure",
+    "entrypoint": "/opt/github-dorks/github-dorks.py",
+    "example": "github-dorks -u target-org",
+    "path": "/opt/github-dorks",
+    "repo": "https://github.com/techgaun/github-dorks.git",
+    "requirements": [
+      "-r",
+      "/opt/github-dorks/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "github-subdomains": {
+    "apt": null,
+    "binary": "github-subdomains",
+    "category": "subdomains",
+    "description": "Find subdomains from GitHub commits and repos",
+    "example": "github-subdomains -d target.com -t github_token",
+    "package": "github.com/gwen001/github-subdomains@latest",
+    "type": "go"
   },
   "gospider": {
-    "type": "go",
-    "package": "github.com/jaeles-project/gospider",
     "binary": "gospider",
-    "description": "Fast web spider for endpoint discovery",
     "category": "core",
-    "example": "gospider -s https://target.com -o output"
+    "description": "Fast web spider for endpoint discovery",
+    "example": "gospider -s https://target.com -o output",
+    "package": "github.com/jaeles-project/gospider",
+    "type": "go"
+  },
+  "graphqlmap": {
+    "binary": "graphqlmap",
+    "category": "vuln",
+    "description": "GraphQL security testing",
+    "entrypoint": "/opt/GraphQLmap/graphqlmap.py",
+    "example": "python3 graphqlmap.py -u https://target.com/graphql",
+    "path": "/opt/GraphQLmap",
+    "repo": "https://github.com/swisskyrepo/GraphQLmap.git",
+    "requirements": [
+      "-r",
+      "/opt/GraphQLmap/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "graphw00f": {
+    "binary": "graphw00f",
+    "category": "vuln",
+    "description": "GraphQL fingerprinting",
+    "entrypoint": "/opt/graphw00f/graphw00f",
+    "example": "graphw00f https://target.com/graphql",
+    "path": "/opt/graphw00f",
+    "repo": "https://github.com/dolevf/graphw00f.git",
+    "requirements": [
+      "-r",
+      "/opt/graphw00f/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "httpx": {
+    "binary": "httpx",
+    "category": "core",
+    "description": "HTTP toolkit for probing, fingerprinting, and crawling",
+    "example": "cat subs.txt | httpx -silent -status-code",
+    "package": "github.com/projectdiscovery/httpx/cmd/httpx@latest",
+    "type": "go"
+  },
+  "interactsh": {
+    "apt": null,
+    "binary": "interactsh-client",
+    "category": "utils",
+    "description": "Out-of-band interaction client for blind testing",
+    "example": "interactsh-client",
+    "package": "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest",
+    "type": "go"
+  },
+  "interactsh-client": {
+    "binary": "interactsh-client",
+    "category": "utils",
+    "description": "Client for OOB interaction detection",
+    "example": "interactsh-client",
+    "package": "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest",
+    "type": "go"
+  },
+  "jeeves": {
+    "binary": "jeeves",
+    "category": "osint",
+    "description": "OSINT automation tool for reconnaissance",
+    "entrypoint": "/opt/jeeves/jeeves.py",
+    "example": "python3 jeeves.py -d target.com",
+    "path": "/opt/jeeves",
+    "repo": "https://github.com/ferreiraklet/Jeeves.git",
+    "requirements": [
+      "-r",
+      "/opt/jeeves/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "jsecret": {
+    "binary": "jsecret",
+    "category": "js",
+    "description": "JavaScript secret and API key finder",
+    "entrypoint": "/opt/jsecret/jsecret.py",
+    "example": "jsecret -u https://target.com",
+    "path": "/opt/jsecret",
+    "repo": "https://github.com/raoufmaklouf/jsecret.git",
+    "requirements": [
+      "-r",
+      "/opt/jsecret/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "jsfinder": {
+    "binary": "jsfinder",
+    "category": "js",
+    "description": "JavaScript secrets finder",
+    "entrypoint": "/opt/jsfinder/JSFinder.py",
+    "example": "python3 JSFinder.py -u https://target.com",
+    "path": "/opt/jsfinder",
+    "repo": "https://github.com/0x240x23elu/jsfinder.git",
+    "requirements": [
+      "-r",
+      "/opt/jsfinder/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "jsleak": {
+    "binary": "jsleak",
+    "category": "js",
+    "description": "JavaScript leak scanner",
+    "entrypoint": "/opt/jsleak/jsleak.py",
+    "example": "python3 jsleak.py -u https://target.com",
+    "path": "/opt/jsleak",
+    "repo": "https://github.com/003random/jsleak.git",
+    "requirements": [
+      "-r",
+      "/opt/jsleak/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "jsluice": {
+    "apt": null,
+    "binary": "jsluice",
+    "category": "js",
+    "description": "JavaScript link extractor",
+    "example": "cat urls.txt | jsluice",
+    "package": "github.com/BishopFox/jsluice/cmd/jsluice@latest",
+    "type": "go"
+  },
+  "katana": {
+    "binary": "katana",
+    "category": "core",
+    "description": "Next-gen crawling and spidering framework",
+    "example": "katana -u https://target.com -silent -depth 3 -js-crawl",
+    "package": "github.com/projectdiscovery/katana/cmd/katana@latest",
+    "type": "go"
+  },
+  "kiterunner": {
+    "binary": "kr",
+    "build_cmd": "go build -o kr ./cmd/kr",
+    "category": "web",
+    "description": "Content discovery framework",
+    "example": "kr scan https://target.com",
+    "path": "/opt/kiterunner",
+    "repo": "https://github.com/assetnote/kiterunner.git",
+    "type": "git"
+  },
+  "linkfinder": {
+    "binary": "linkfinder",
+    "category": "js",
+    "description": "Discover hidden endpoints in JavaScript files",
+    "entrypoint": "/opt/LinkFinder/linkfinder.py",
+    "example": "linkfinder -i https://target.com/main.js -o cli",
+    "path": "/opt/LinkFinder",
+    "post_clone": "npm install --silent",
+    "repo": "https://github.com/GerbenJavado/LinkFinder.git",
+    "requirements": [
+      "-r",
+      "/opt/LinkFinder/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "masscan": {
+    "binary": "masscan",
+    "build_cmd": "make && make install",
+    "category": "ports",
+    "description": "High-speed port scanner",
+    "example": "masscan -p1-65535 target.com",
+    "path": "/opt/masscan",
+    "repo": "https://github.com/robertdavidgraham/masscan.git",
+    "type": "git"
+  },
+  "metabigor": {
+    "apt": null,
+    "binary": "metabigor",
+    "category": "ports",
+    "description": "Network intelligence for ASN and IP range discovery",
+    "example": "metabigor net -d target.com",
+    "package": "github.com/j3ssie/metabigor@latest",
+    "type": "go"
+  },
+  "metasploit-framework": {
+    "binary": "msfconsole",
+    "category": "vuln",
+    "description": "Complete penetration testing framework",
+    "entrypoint": "/opt/metasploit-framework/msfconsole",
+    "example": "msfconsole",
+    "path": "/opt/metasploit-framework",
+    "post_clone": "./msfupdate",
+    "repo": "https://github.com/rapid7/metasploit-framework.git",
+    "type": "git"
+  },
+  "naabu": {
+    "binary": "naabu",
+    "category": "core",
+    "description": "Fast port scanner for network reconnaissance",
+    "example": "naabu -host target.com -p 80,443,8080,8443",
+    "package": "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest",
+    "type": "go"
+  },
+  "nikto": {
+    "apt": "nikto",
+    "binary": "nikto",
+    "category": "cms",
+    "description": "Web server scanner",
+    "example": "nikto -h https://target.com",
+    "package": "nikto",
+    "type": "apt"
+  },
+  "nosqlmap": {
+    "binary": "nosqlmap",
+    "category": "vuln",
+    "description": "NoSQL database injection",
+    "entrypoint": "/opt/NoSQLMap/nosqlmap.py",
+    "example": "python3 nosqlmap.py -u https://target.com",
+    "path": "/opt/NoSQLMap",
+    "repo": "https://github.com/codingo/NoSQLMap.git",
+    "requirements": [
+      "-r",
+      "/opt/NoSQLMap/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "notify": {
+    "binary": "notify",
+    "category": "utils",
+    "description": "Real-time notifications for all your recon workflow",
+    "example": "echo 'New subdomain found!' | notify -silent",
+    "package": "github.com/projectdiscovery/notify/cmd/notify@latest",
+    "type": "go"
+  },
+  "nuclei": {
+    "binary": "nuclei",
+    "category": "core",
+    "description": "Fast vulnerability scanner with 10,000+ community templates",
+    "example": "cat alive.txt | nuclei -t exposures/ -severity critical,high",
+    "package": "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",
+    "post_install": "nuclei -ut -silent",
+    "type": "go"
+  },
+  "paramspider": {
+    "binary": "paramspider",
+    "category": "osint",
+    "description": "Mine parameters from web archives",
+    "entrypoint": "/opt/ParamSpider/paramspider.py",
+    "example": "paramspider -d target.com",
+    "path": "/opt/ParamSpider",
+    "repo": "https://github.com/devanshbatham/ParamSpider.git",
+    "requirements": [
+      "-r",
+      "/opt/ParamSpider/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "pegpon": {
+    "binary": "pegpon",
+    "category": "automation",
+    "description": "Advanced Bash-based automation tool for subdomain enumeration, fuzzing, and web reconnaissance.",
+    "entrypoint": "/opt/PEGPON/pegpon",
+    "example": "pegpon -d example.com",
+    "path": "/opt/PEGPON",
+    "repo": "https://github.com/LABx-EnV/PEGPON.git",
+    "type": "git"
+  },
+  "reconftw": {
+    "binary": "reconftw",
+    "category": "utils",
+    "description": "Automated recon framework",
+    "entrypoint": "/opt/reconftw/reconftw.sh",
+    "example": "./reconftw.sh -d target.com",
+    "path": "/opt/reconftw",
+    "post_clone": "./install.sh",
+    "repo": "https://github.com/six2dez/reconftw.git",
+    "type": "git"
+  },
+  "s3scanner": {
+    "binary": "s3scanner",
+    "category": "cloud",
+    "description": "AWS S3 bucket scanner",
+    "entrypoint": "/opt/S3Scanner/s3scanner.py",
+    "example": "python3 s3scanner.py buckets.txt",
+    "path": "/opt/S3Scanner",
+    "repo": "https://github.com/sa7mon/S3Scanner.git",
+    "requirements": [
+      "-r",
+      "/opt/S3Scanner/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "seclists": {
+    "binary": "seclists",
+    "category": "utils",
+    "description": "Collection of security wordlists",
+    "example": "ls /opt/seclists/Discovery/Web-Content/common.txt",
+    "path": "/opt/seclists",
+    "repo": "https://github.com/danielmiessler/SecLists.git",
+    "type": "git"
+  },
+  "shuffledns": {
+    "apt": "shuffledns",
+    "binary": "shuffledns",
+    "category": "subdomains",
+    "description": "MassDNS wrapper for subdomain brute-forcing",
+    "example": "shuffledns -list subs.txt -d target.com -r resolvers.txt",
+    "package": "github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest",
+    "type": "go"
+  },
+  "sqlmap": {
+    "binary": "sqlmap",
+    "category": "vuln",
+    "description": "Automatic SQL injection and database takeover tool",
+    "entrypoint": "/opt/sqlmap/sqlmap.py",
+    "example": "sqlmap -u https://target.com/search?q=test --batch",
+    "path": "/opt/sqlmap",
+    "repo": "https://github.com/sqlmapproject/sqlmap.git",
+    "type": "git"
+  },
+  "subdomainizer": {
+    "binary": "subdomainizer",
+    "category": "core",
+    "description": "Find interesting subdomains and secrets in external resources",
+    "entrypoint": "/opt/SubDomainizer/SubDomainizer.py",
+    "example": "subdomainizer -u https://target.com -o results.txt",
+    "path": "/opt/SubDomainizer",
+    "repo": "https://github.com/nsonaniya2010/SubDomainizer.git",
+    "requirements": [
+      "-r",
+      "/opt/SubDomainizer/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "subfinder": {
+    "binary": "subfinder",
+    "category": "core",
+    "description": "Fast subdomain discovery using 30+ passive sources",
+    "example": "subfinder -d target.com -silent -o subs.txt",
+    "package": "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
+    "type": "go"
+  },
+  "subjack": {
+    "binary": "subjack",
+    "build_cmd": "go build -o subjack .",
+    "category": "takeover",
+    "description": "Subdomain takeover tool",
+    "example": "subjack -w subs.txt",
+    "path": "/opt/subjack",
+    "repo": "https://github.com/haccer/subjack.git",
+    "type": "git"
+  },
+  "sublist3r": {
+    "binary": "sublist3r",
+    "category": "core",
+    "description": "Fast subdomain enumeration using OSINT sources",
+    "example": "sublist3r -d target.com -o subs.txt",
+    "package": "sublist3r==1.0",
+    "type": "python"
   },
   "subzy": {
-    "type": "go",
-    "package": "github.com/PentestPad/subzy",
     "binary": "subzy",
-    "description": "Fast subdomain takeover scanner",
     "category": "core",
-    "example": "subzy -list subs.txt"
+    "description": "Fast subdomain takeover scanner",
+    "example": "subzy -list subs.txt",
+    "package": "github.com/PentestPad/subzy",
+    "type": "go"
+  },
+  "uro": {
+    "apt": null,
+    "binary": "uro",
+    "category": "utils",
+    "description": "URL recon tool",
+    "example": "uro -u https://target.com",
+    "package": "github.com/s0md3v/uro@latest",
+    "type": "go"
+  },
+  "virustotalx": {
+    "binary": "virustotalx",
+    "category": "osint",
+    "description": "VirusTotal intelligence tool for domain/IP/URL analysis",
+    "entrypoint": "/opt/virustotalx/virustotalx.py",
+    "example": "virustotalx -d target.com --api-key YOUR_VT_KEY",
+    "path": "/opt/virustotalx",
+    "repo": "https://github.com/ru3y7/virustotalx.git",
+    "requirements": [
+      "-r",
+      "/opt/virustotalx/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "wafw00f": {
+    "binary": "wafw00f",
+    "category": "vuln",
+    "description": "WAF detection and identification",
+    "entrypoint": "/opt/wafw00f/wafw00f",
+    "example": "wafw00f https://target.com",
+    "path": "/opt/wafw00f",
+    "repo": "https://github.com/EnableSecurity/wafw00f.git",
+    "requirements": [
+      "-r",
+      "/opt/wafw00f/requirements.txt"
+    ],
+    "type": "git"
+  },
+  "waybackurls": {
+    "binary": "waybackurls",
+    "category": "osint",
+    "description": "Fetch all known URLs from Wayback Machine for a domain",
+    "example": "echo example.com | waybackurls",
+    "package": "github.com/tomnomnom/waybackurls@latest",
+    "type": "go"
+  },
+  "wpscan": {
+    "apt": null,
+    "binary": "wpscan",
+    "category": "cms",
+    "description": "WordPress security scanner",
+    "example": "wpscan --url https://target.com",
+    "package": "wpscan",
+    "type": "ruby"
+  },
+  "x8": {
+    "binary": "x8",
+    "build_cmd": "cargo build --release",
+    "category": "web",
+    "description": "Advanced parameter discovery tool written in Rust.",
+    "example": "x8 -u https://example.com/ -w wordlist.txt",
+    "path": "/opt/x8",
+    "repo": "https://github.com/Sh1Yo/x8",
+    "type": "git"
+  },
+  "xspear": {
+    "apt": null,
+    "binary": "xspear",
+    "category": "vuln",
+    "description": "XSS scanner with Selenium",
+    "example": "xspear -u https://target.com",
+    "package": "XSpear",
+    "type": "ruby"
+  },
+  "xsstrike": {
+    "binary": "xsstrike",
+    "category": "vuln",
+    "description": "Advanced XSS detection suite",
+    "entrypoint": "/opt/XSStrike/xsstrike.py",
+    "example": "xsstrike -u https://target.com/search?q=test",
+    "path": "/opt/XSStrike",
+    "repo": "https://github.com/s0md3v/XSStrike.git",
+    "requirements": [
+      "-r",
+      "/opt/XSStrike/requirements.txt"
+    ],
+    "type": "git"
   }
 }

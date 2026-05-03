@@ -4,269 +4,117 @@
 
 ---
 
-## ⭐ Top Hunters Core Set (15 Essential Tools)
-
-> **What top hunters actually use daily** - The most essential 15-tool set for efficient reconnaissance
-
-| # | Tool | Primary Use | Repository |
-|---|-------|--------------|------------|
-| 1 | **Burp Suite Pro** | Manual testing | *[Commercial Product](https://portswigger.net/burp)* |
-| 2 | **httpx** | HTTP probing | [projectdiscovery/httpx](https://github.com/projectdiscovery/httpx) |
-| 3 | **nuclei** | Template-based scanning | [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) |
-| 4 | **dalfox** | XSS scanning | [dalfox/dalfox](https://github.com/dalfox/dalfox) |
-| 5 | **arjun** | Parameter discovery | [s0md3v/Arjun](https://github.com/s0md3v/Arjun) |
-| 6 | **ffuf** | Fuzzing | [ffuf/ffuf](https://github.com/ffuf/ffuf) |
-| 7 | **waybackurls / gau** | URL harvesting | [tomnomnom/waybackurls](https://github.com/tomnomnom/waybackurls) / [lc/gau](https://github.com/lc/gau) |
-| 8 | **gf + SecLists** | Pattern matching + wordlists | [tomnomnom/gf](https://github.com/tomnomnom/gf) / [danielmiessler/SecLists](https://github.com/danielmiessler/SecLists) |
-| 9 | **subfinder** | Subdomain enum | [projectdiscovery/subfinder](https://github.com/projectdiscovery/subfinder) |
-| 10 | **naabu** | Port scanning | [projectdiscovery/naabu](https://github.com/projectdiscovery/naabu) |
-| 11 | **sqlmap** | SQL injection | [sqlmapproject/sqlmap](https://github.com/sqlmapproject/sqlmap) |
-| 12 | **wpscan** | WordPress targets | [wpscanteam/wpscan](https://github.com/wpscanteam/wpscan) |
-| 13 | **interactsh** | OOB testing | [projectdiscovery/interactsh](https://github.com/projectdiscovery/interactsh) |
-| 14 | **kiterunner** | API/content discovery | [assetnote/kiterunner](https://github.com/assetnote/kiterunner) |
-| 15 | **ReconFTW** | Automation wrapper | [six2dez/reconftw](https://github.com/six2dez/reconftw) |
-
-### Quick Install - Core Set
-```bash
-# Install the essential 15-tool core set
-sudo python reconranger.py -c core
-```
-
----
-
-## 📂 Installation Commands
-
-```bash
-# Install all tools
-sudo python reconranger.py --all
-
-# Install by category
-sudo python reconranger.py -c recon
-sudo python reconranger.py -c dns
-sudo python reconranger.py -c http
-
-# Install specific tools
-sudo python reconranger.py -t subfinder amass nuclei
-
-# List categories
-python reconranger.py --categories
-
-# List all tools
-python reconranger.py --list
-
-# Show repository links
-python reconranger.py --links
-```
-
----
-
-## 🌐 Recon & Subdomain Enumeration (7)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **amass** | In-depth attack surface mapping | [owasp-amass/amass](https://github.com/owasp-amass/amass) |
-| **subfinder** | Fast subdomain discovery (30+ sources) | [projectdiscovery/subfinder](https://github.com/projectdiscovery/subfinder) |
-| **assetfinder** | Certificate Transparency subdomains | [tomnomnom/assetfinder](https://github.com/tomnomnom/assetfinder) |
-| **sublist3r** | OSINT-based subdomain enumeration | [aboul3la/Sublist3r](https://github.com/aboul3la/Sublist3r) |
-| **subdomainizer** | Find subdomains in external resources | [nsonaniya2010/SubDomainizer](https://github.com/nsonaniya2010/SubDomainizer) |
-| **github-subdomains** | GitHub commits/repos subdomains | [gwen001/github-subdomains](https://github.com/gwen001/github-subdomains) |
-| **bbot** | Recursive internet scanner | [blacklanternsecurity/bbot](https://github.com/blacklanternsecurity/bbot) |
-
----
-
-## 📡 DNS & Network Scanning (4)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **dnsx** | Multi-purpose DNS toolkit | [projectdiscovery/dnsx](https://github.com/projectdiscovery/dnsx) |
-| **shuffledns** | MassDNS wrapper for brute-forcing | [projectdiscovery/shuffledns](https://github.com/projectdiscovery/shuffledns) |
-| **masscan** | High-speed port scanner | [robertdavidgraham/masscan](https://github.com/robertdavidgraham/masscan) |
-| **naabu** | Fast port scanner for recon | [projectdiscovery/naabu](https://github.com/projectdiscovery/naabu) |
-
----
-
-## 🔍 HTTP Probing & Fingerprinting (3)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **httpx** | HTTP probing and fingerprinting | [projectdiscovery/httpx](https://github.com/projectdiscovery/httpx) |
-| **wafw00f** | WAF detection and identification | [EnableSecurity/wafw00f](https://github.com/EnableSecurity/wafw00f) |
-| **graphw00f** | GraphQL fingerprinting | [dolevf/graphw00f](https://github.com/dolevf/graphw00f) |
-
----
-
-## 🕷️ Crawling & JavaScript Analysis (6)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **katana** | Next-gen web crawler | [projectdiscovery/katana](https://github.com/projectdiscovery/katana) |
-| **gospider** | Fast web spider | [jaeles-project/gospider](https://github.com/jaeles-project/gospider) |
-| **linkfinder** | JavaScript endpoint discovery | [GerbenJavado/LinkFinder](https://github.com/GerbenJavado/LinkFinder) |
-| **jsfinder** | JavaScript secrets finder | [0x240x23elu/jsfinder](https://github.com/0x240x23elu/jsfinder) |
-| **jsluice** | JavaScript link extractor | [BishopFox/jsluice](https://github.com/BishopFox/jsluice) |
-| **jsleak** | JavaScript leak scanner | [003random/jsleak](https://github.com/003random/jsleak) |
-
----
-
-## 🔓 Content Discovery & Fuzzing (4)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **ffuf** | Fast web fuzzer | [ffuf/ffuf](https://github.com/ffuf/ffuf) |
-| **dirsearch** | Directory brute-forcing | [maurosoria/dirsearch](https://github.com/maurosoria/dirsearch) |
-| **kiterunner** | Content discovery framework | [assetnote/kiterunner](https://github.com/assetnote/kiterunner) |
-| **cewl** | Custom wordlist generator | [digininja/CeWL](https://github.com/digininja/CeWL) |
-
----
-
-## 🔑 Parameter Discovery (2)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **arjun** | HTTP parameter discovery | [s0md3v/Arjun](https://github.com/s0md3v/Arjun) |
-| **paramspider** | Parameter mining from archives | [devanshbatham/ParamSpider](https://github.com/devanshbatham/ParamSpider) |
-
----
-
-## 💉 XSS Scanners (3)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **xsstrike** | Advanced XSS detection | [s0md3v/XSStrike](https://github.com/s0md3v/XSStrike) |
-| **dalfox** | Modern XSS scanner | [dalfox/dalfox](https://github.com/dalfox/dalfox) |
-| **xspear** | XSS scanner with Selenium | [hahwul/XSpear](https://github.com/hahwul/XSpear) |
-
----
-
-## 🧪 Vulnerability Scanners (2)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **nuclei** | Fast vulnerability scanner (10k+ templates) | [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) |
-| **nikto** | Web server scanner | [sullo/nikto](https://github.com/sullo/nikto) |
-
----
-
-## 💥 Exploitation Framework (1)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **metasploit-framework** | Complete penetration testing framework | [rapid7/metasploit-framework](https://github.com/rapid7/metasploit-framework) |
-
----
-
-## 📦 Specialized Attack Tools
-
-### SQL/NoSQL Injection (3)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **sqlmap** | Automatic SQL injection tool | [sqlmapproject/sqlmap](https://github.com/sqlmapproject/sqlmap) |
-| **ghauri** | SQL injection scanner | [r0oth3x49/ghauri](https://github.com/r0oth3x49/ghauri) |
-| **nosqlmap** | NoSQL database injection | [codingo/NoSQLMap](https://github.com/codingo/NoSQLMap) |
-
-### GraphQL (2)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **graphqlmap** | GraphQL security testing | [swisskyrepo/GraphQLmap](https://github.com/swisskyrepo/GraphQLmap) |
-| **graphw00f** | GraphQL fingerprinting | [dolevf/graphw00f](https://github.com/dolevf/graphw00f) |
-
-### Directory Traversal (1)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **dotdotpwn** | Path traversal fuzzer | [wireghoul/dotdotpwn](https://github.com/wireghoul/dotdotpwn) |
-
-### Cloud Buckets (2)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **s3scanner** | AWS S3 bucket scanner | [sa7mon/S3Scanner](https://github.com/sa7mon/S3Scanner) |
-| **cloud_enum** | Multi-cloud resource enumeration | [initstring/cloud_enum](https://github.com/initstring/cloud_enum) |
-
-### CMS Scanners (2)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **wpscan** | WordPress security scanner | [wpscanteam/wpscan](https://github.com/wpscanteam/wpscan) |
-| **droopescan** | CMS scanner (Drupal, Joomla, etc.) | [droope/droopescan](https://github.com/droope/droopescan) |
-
----
-
-## 🌍 Subdomain Takeover (3)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **subjack** | Subdomain takeover detection | [haccer/subjack](https://github.com/haccer/subjack) |
-| **subzy** | Fast subdomain takeover scanner | [LukaSikic/subzy](https://github.com/LukaSikic/subzy) |
-| **subover** | Subdomain takeover tool | [Ice3man543/SubOver](https://github.com/Ice3man543/SubOver) |
-
----
-
-## 🔎 OSINT & GitHub Hunting (5)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **github-dorks** | GitHub sensitive data finder | [techgaun/github-dorks](https://github.com/techgaun/github-dorks) |
-| **githound** | GitHub secrets hunter | [tillson/git-hound](https://github.com/tillson/git-hound) |
-| **jsecret** | JavaScript secret finder | [raoufmaklouf/jsecret](https://github.com/raoufmaklouf/jsecret) |
-| **virustotalx** | VirusTotal intelligence tool | [ru3y7/virustotalx](https://github.com/ru3y7/virustotalx) |
-| **metabigor** | Network intelligence tool | [j3ssie/metabigor](https://github.com/j3ssie/metabigor) |
-
----
-
-## 🧰 Utilities & Helpers (7)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **waybackurls** | URL fetcher from archives | [tomnomnom/waybackurls](https://github.com/tomnomnom/waybackurls) |
-| **gau** | GetAllUrls enumerator | [lc/gau](https://github.com/lc/gau) |
-| **anew** | Append new lines to files | [tomnomnom/anew](https://github.com/tomnomnom/anew) |
-| **interactsh** | Out-of-band interaction client | [projectdiscovery/interactsh](https://github.com/projectdiscovery/interactsh) |
-| **gf** | Pattern finder for grep | [tomnomnom/gf](https://github.com/tomnomnom/gf) |
-| **uro** | URL recon tool | [s0md3v/uro](https://github.com/s0md3v/uro) |
-| **seclists** | Collection of security wordlists | [danielmiessler/SecLists](https://github.com/danielmiessler/SecLists) |
-
----
-
-## 🤖 Automation Frameworks (5)
-
-| Tool | Description | Repository |
-|-------|-------------|------------|
-| **reconftw** | Automated recon framework | [six2dez/reconftw](https://github.com/six2dez/reconftw) |
-| **aidor** | IDOR automation scanner | [abdulahadtheCyber-pixel/AIDOR](https://github.com/abdulahadtheCyber-pixel/AIDOR) |
-| **enumrust** | Rust-based enumeration tool | [KingOfBugbounty/enumrust](https://github.com/KingOfBugbounty/enumrust) |
-| **cvinder** | CVE identifier and finder | [3a7/CVINDER](https://github.com/3a7/CVINDER) |
-| **jeeves** | OSINT automation tool | [ferreiraklet/Jeeves](https://github.com/ferreiraklet/Jeeves) |
-
----
-
-## 📊 Summary
-
-- **Total Tools**: 61
-- **Categories**: 18
-- **Languages**: Go, Python, Ruby, Rust, Perl, Shell
-- **Installation Methods**: go install, git clone, pip install, apt install, gem install, cargo build
-
----
-
-## 🚀 Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/ShadowVoid-King/Recon-Ranger
-cd Recon-Ranger
-
-# Install all tools
-sudo python reconranger.py --all
-
-# Or install by category
-sudo python reconranger.py -c recon
-sudo python reconranger.py -c vuln
-sudo python reconranger.py -c xss
-```
-
----
-
-*Last updated: February 2026*
+## Core
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| bbot | python | bbot | All-in-one recon framework (replaces 10+ tools; handles subdomains → ports → endpoints → vulns recursively) |
+| subfinder | go | github.com/projectdiscovery/subfinder/v2/cmd/subfinder | Fast subdomain discovery using 30+ passive sources |
+| sublist3r | python | sublist3r==1.0 | Fast subdomain enumeration using OSINT sources |
+| subdomainizer | git | https://github.com/nsonaniya2010/SubDomainizer.git | Find interesting subdomains and secrets in external resources |
+| assetfinder | go | github.com/tomnomnom/assetfinder | Find subdomains from Certificate Transparency logs |
+| dnsx | go | github.com/projectdiscovery/dnsx/cmd/dnsx | Multi-purpose DNS toolkit for enumeration and resolution |
+| httpx | go | github.com/projectdiscovery/httpx/cmd/httpx | HTTP toolkit for probing, fingerprinting, and crawling |
+| naabu | go | github.com/projectdiscovery/naabu/v2/cmd/naabu | Fast port scanner for network reconnaissance |
+| katana | go | github.com/projectdiscovery/katana/cmd/katana | Next-gen crawling and spidering framework |
+| gospider | go | github.com/jaeles-project/gospider | Fast web spider for endpoint discovery |
+| ffuf | go | github.com/ffuf/ffuf/v2 | Fast web fuzzer for directory brute-forcing |
+| arjun | git | https://github.com/s0md3v/Arjun.git | HTTP parameter discovery suite |
+| subzy | go | github.com/PentestPad/subzy | Fast subdomain takeover scanner |
+| nuclei | go | github.com/projectdiscovery/nuclei/v3/cmd/nuclei | Fast vulnerability scanner with 10,000+ community templates |
+| amass | go | github.com/owasp-amass/amass/v4/cmd/amass | In-depth attack surface mapping with graph visualization |
+
+## Subdomains
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| shuffledns | go | github.com/projectdiscovery/shuffledns/cmd/shuffledns | MassDNS wrapper for subdomain brute-forcing |
+| github-subdomains | go | github.com/gwen001/github-subdomains | Find subdomains from GitHub commits and repos |
+
+## Js
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| linkfinder | git | https://github.com/GerbenJavado/LinkFinder.git | Discover hidden endpoints in JavaScript files |
+| jsfinder | git | https://github.com/0x240x23elu/jsfinder.git | JavaScript secrets finder |
+| jsleak | git | https://github.com/003random/jsleak.git | JavaScript leak scanner |
+| jsecret | git | https://github.com/raoufmaklouf/jsecret.git | JavaScript secret and API key finder |
+| jsluice | go | github.com/BishopFox/jsluice/cmd/jsluice | JavaScript link extractor |
+
+## Osint
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| gau | go | github.com/lc/gau/v2/cmd/gau | GetAllUrls - URL enumerator from multiple sources |
+| waybackurls | go | github.com/tomnomnom/waybackurls | Fetch URLs from Wayback Machine and Common Crawl |
+| githound | git | https://github.com/tillson/git-hound.git | GitHub secrets hunter and sensitive data finder |
+| github-dorks | git | https://github.com/techgaun/github-dorks.git | GitHub dorking for sensitive data exposure |
+| paramspider | git | https://github.com/devanshbatham/ParamSpider.git | Mine parameters from web archives |
+| virustotalx | git | https://github.com/ru3y7/virustotalx.git | VirusTotal intelligence tool for domain/IP/URL analysis |
+| jeeves | git | https://github.com/ferreiraklet/Jeeves.git | OSINT automation tool for reconnaissance |
+
+## Web
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| kiterunner | git | https://github.com/assetnote/kiterunner.git | Content discovery framework |
+| cewl | apt | cewl | Custom wordlist generator from website spidering |
+
+## Vuln
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| xsstrike | git | https://github.com/s0md3v/XSStrike.git | Advanced XSS detection suite |
+| dalfox | go | github.com/dalfox/dalfox/v2 | Modern XSS scanner and parameter analyzer |
+| sqlmap | git | https://github.com/sqlmapproject/sqlmap.git | Automatic SQL injection and database takeover tool |
+| ghauri | git | https://github.com/r0oth3x49/ghauri.git | SQL injection scanner |
+| wafw00f | git | https://github.com/EnableSecurity/wafw00f.git | WAF detection and identification |
+| graphw00f | git | https://github.com/dolevf/graphw00f.git | GraphQL fingerprinting |
+| dotdotpwn | git | https://github.com/wireghoul/dotdotpwn.git | Path traversal fuzzer |
+| graphqlmap | git | https://github.com/swisskyrepo/GraphQLmap.git | GraphQL security testing |
+| nosqlmap | git | https://github.com/codingo/NoSQLMap.git | NoSQL database injection |
+| cvinder | git | https://github.com/3a7/CVINDER.git | CVE identifier and vulnerability finder |
+| aidor | git | https://github.com/abdulahadtheCyber-pixel/AIDOR.git | Automated Insecure Direct Object Reference scanner |
+| xspear | ruby | XSpear | XSS scanner with Selenium |
+| metasploit-framework | git | https://github.com/rapid7/metasploit-framework.git | Complete penetration testing framework |
+
+## Cloud
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| cloud_enum | python | cloud_enum | Multi-cloud OSINT for AWS/Azure/GCP public resources |
+| s3scanner | git | https://github.com/sa7mon/S3Scanner.git | AWS S3 bucket scanner |
+
+## Takeover
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| subjack | git | https://github.com/haccer/subjack.git | Subdomain takeover tool |
+
+## Ports
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| masscan | git | https://github.com/robertdavidgraham/masscan.git | High-speed port scanner |
+| metabigor | go | github.com/j3ssie/metabigor | Network intelligence for ASN and IP range discovery |
+
+## Cms
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| wpscan | ruby | wpscan | WordPress security scanner |
+| droopescan | git | https://github.com/droope/droopescan.git | CMS scanner for Drupal and related platforms |
+| nikto | apt | nikto | Web server scanner |
+
+## Utils
+
+| Tool | Type | Install | Description |
+|---|---|---|---|
+| anew | go | github.com/tomnomnom/anew | Append new lines to files, useful for collecting output |
+| gf | go | github.com/tomnomnom/gf | Pattern finder for grep |
+| seclists | git | https://github.com/danielmiessler/SecLists.git | Collection of security wordlists |
+| interactsh | go | github.com/projectdiscovery/interactsh/cmd/interactsh-client | Out-of-band interaction client for blind testing |
+| reconftw | git | https://github.com/six2dez/reconftw.git | Automated recon framework |
+| uro | go | github.com/s0md3v/uro | URL recon tool |
+| enumrust | cargo | https://github.com/KingOfBugbounty/enumrust.git | Rust-based enumeration tool |
+| dirsearch | git | https://github.com/maurosoria/dirsearch.git | Directory brute-forcing |
