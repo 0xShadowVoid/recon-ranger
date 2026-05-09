@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🦅 ReconRanger v3.1.1 - Surgical Recon Toolkit & Tool Manager
+ReconRanger v4.0 — Bug Bounty CLI Tool Manager
 Developed by 0xShadowVoid
 """
 
@@ -12,218 +12,285 @@ from core.installer import ReconRangerInstaller
 from core.system import SystemManager
 from core.keys import KeyManager
 from core.logger import setup_logging
+from core.config import VERSION, CATEGORIES, TOOL_DEFINITIONS
 
-# Load tool registry
 TOOLS_FILE = Path(__file__).parent / "tools.json"
-def load_tools():
+
+
+def load_tools() -> dict:
     if not TOOLS_FILE.exists():
         return {}
     return json.loads(TOOLS_FILE.read_text())
 
-def save_tools(tools):
-    TOOLS_FILE.write_text(json.dumps(tools, indent=2))
+
+def save_tools(tools: dict) -> None:
+    TOOLS_FILE.write_text(json.dumps(tools, indent=2, sort_keys=True))
+
 
 def main():
-    tools = load_tools()
-    system = SystemManager()
+    tools       = load_tools()
+    system      = SystemManager()
     key_manager = KeyManager()
-    logger = setup_logging()
+    logger      = setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="🦅 ReconRanger v3.1.1 - Surgical Recon Toolkit",
+        description=f"ReconRanger v{VERSION} — Bug Bounty CLI Tool Manager",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  reconranger --install-all              # Install all tools in registry
-  reconranger -t subfinder amass         # Install specific tools
-  reconranger --api                      # Manage API keys
-  reconranger --add-tool                 # Add a new tool to registry
-  reconranger --list                     # List all available tools
-        """
+  reconranger.py -c core               Install core toolkit (13 tools)
+  reconranger.py -t subfinder httpx    Install specific tools
+  reconranger.py --install-all         Install every tool in registry
+  reconranger.py --list                List all tools with category/description
+  reconranger.py --categories          Show categories and tool counts
+  reconranger.py --check               Check which tools are installed
+  reconranger.py --api                 Manage API keys
+  reconranger.py --add-tool            Add a custom tool to the registry
+  reconranger.py --edit-tool nuclei    Edit an existing tool entry
+  reconranger.py --delete-tool oldtool Remove a tool from the registry
+        """,
     )
 
-    # Tool Installation
-    group_inst = parser.add_argument_group("Installation Options")
-    group_inst.add_argument("-t", "--tools", nargs="+", help="Specific tools to install by name")
-    group_inst.add_argument("-c", "--category", help="Install all tools from a category")
-    group_inst.add_argument("--install-all", action="store_true", help="Install ALL tools in registry")
-    group_inst.add_argument("--check", action="store_true", help="Check installation status of tools")
+    g_inst = parser.add_argument_group("Installation")
+    g_inst.add_argument("-t", "--tools",       nargs="+", metavar="TOOL", help="Install specific tools by name")
+    g_inst.add_argument("-c", "--category",    metavar="CAT",  help="Install all tools in a category")
+    g_inst.add_argument("--install-all",       action="store_true", help="Install every tool in the registry")
+    g_inst.add_argument("--check",             action="store_true", help="Show installation status for all tools")
 
-    # API Key Management
-    group_api = parser.add_argument_group("API Key Management")
-    group_api.add_argument("--api", action="store_true", help="Launch API key configuration wizard")
-    group_api.add_argument("--apply-keys", action="store_true", help="Apply keys to tool config files and environment")
+    g_api = parser.add_argument_group("API Keys")
+    g_api.add_argument("--api",                action="store_true", help="Launch API key configuration wizard")
+    g_api.add_argument("--apply-keys",         action="store_true", help="Apply saved keys to tool configs and env")
 
-    # Tool Registry Management
-    group_reg = parser.add_argument_group("Registry Management")
-    group_reg.add_argument("--add-tool", action="store_true", help="Add a new tool to the registry")
-    group_reg.add_argument("--edit-tool", help="Edit an existing tool in the registry")
-    group_reg.add_argument("--delete-tool", help="Delete a tool from the registry")
-    group_reg.add_argument("-l", "--list", "-list", action="store_true", help="List all tools in registry")
+    g_reg = parser.add_argument_group("Registry")
+    g_reg.add_argument("--add-tool",           action="store_true", help="Add a new tool interactively")
+    g_reg.add_argument("--edit-tool",          metavar="TOOL",      help="Edit an existing tool entry interactively")
+    g_reg.add_argument("--delete-tool",        metavar="TOOL",      help="Delete a tool from the registry")
+    g_reg.add_argument("-l", "--list",         action="store_true", help="List all tools")
+    g_reg.add_argument("--categories",         action="store_true", help="List categories with tool counts")
 
-    # System
-    group_sys = parser.add_argument_group("System")
-    group_sys.add_argument("--fix-deps", action="store_true", help="Auto-fix system dependencies")
-    parser.add_argument("--categories", action="store_true", help="List available categories and counts")
+    g_sys = parser.add_argument_group("System")
+    g_sys.add_argument("--fix-deps",           action="store_true", help="Install/fix system dependencies")
 
     args = parser.parse_args()
 
-    def interactive_menu():
-        """Simple interactive menu shown when no CLI args provided."""
-        while True:
-            print("\nReconRanger Interactive Menu:\n1) List tools\n2) List categories\n3) Install a category\n4) Install specific tools (space-separated)\n5) Install core\n6) Exit")
-            choice = input("Choose an option (1-6): ").strip()
-            if choice == "1":
-                args.list = True
-                return
-            if choice == "2":
-                args.categories = True
-                return
-            if choice == "3":
-                cat = input("Category name: ").strip()
-                args.category = cat
-                return
-            if choice == "4":
-                t = input("Tools (space-separated): ").strip().split()
-                args.tools = t
-                return
-            if choice == "5":
-                args.category = "core"
-                return
-            if choice == "6":
-                print("👋 Exiting interactive mode.")
-                sys.exit(0)
-            print("Invalid choice, try again.")
-
-    # If no args provided, enter interactive menu
+    # ── Interactive menu (no args) ────────────────────────────────────────────
     if len(sys.argv) == 1:
-        interactive_menu()
+        _interactive_menu(args)
 
-    # 1. System Fix
+    # ── System ────────────────────────────────────────────────────────────────
     if args.fix_deps:
         system.install_system_dependencies()
         system.check_go()
         return
 
-    # 2. API Management
+    # ── API keys ──────────────────────────────────────────────────────────────
     if args.api:
         key_manager.wizard()
         return
-    
+
     if args.apply_keys:
         key_manager.apply_to_env()
         return
 
-    # 3. Registry Management
+    # ── Registry management ───────────────────────────────────────────────────
     if args.add_tool:
-        name = input("Tool Name: ").strip().lower()
-        ttype = input("Type (go/python/git/apt): ").strip().lower()
-        package = input("Package/Repo URL: ").strip()
-        binary = input("Binary Name: ").strip()
-        desc = input("Description: ").strip()
-        cat = input("Category: ").strip()
-        tools[name] = {
-            "type": ttype,
-            "package": package,
-            "binary": binary,
-            "description": desc,
-            "category": cat
-        }
-        save_tools(tools)
-        print(f"✅ Added {name} to registry.")
+        _add_tool(tools)
+        return
+
+    if args.edit_tool:
+        _edit_tool(tools, args.edit_tool)
         return
 
     if args.delete_tool:
-        if args.delete_tool in tools:
-            del tools[args.delete_tool]
-            save_tools(tools)
-            print(f"✅ Deleted {args.delete_tool}.")
-        else:
-            print("❌ Tool not found.")
+        _delete_tool(tools, args.delete_tool)
         return
 
     if args.list:
-        print(f"\n🛠️  ReconRanger Registry ({len(tools)} tools):")
-        print(f"{'#':<3} {'Name':<18} {'Category':<12} {'Description'}")
-        print("-" * 75)
-        for i, (name, cfg) in enumerate(tools.items(), 1):
-            print(f"{i:<3} {name:<18} {cfg['category']:<12} {cfg['description'][:40]}")
+        _print_list(tools)
         return
 
     if args.categories:
-        from core.config import CATEGORIES
-        print("\nAvailable Categories:")
-        for name, items in CATEGORIES.items():
-            print(f"- {name}: {len(items)} tools")
+        _print_categories()
         return
 
-    # 4. Installation Logic
+    # ── Installation ──────────────────────────────────────────────────────────
     targets = []
+
     if args.install_all:
         targets = list(tools.keys())
-    elif args.category:
-        # Prefer authoritative category lists from core.config when available.
-        try:
-            from core.config import CATEGORIES, TOOL_DEFINITIONS
-            category_names = CATEGORIES.get(args.category)
-        except Exception:
-            category_names = None
 
-        if category_names:
-            targets = list(category_names)
-            # Supplement registry with definitions for missing tools (runtime only)
-            for n in category_names:
+    elif args.category:
+        cat_tools = CATEGORIES.get(args.category)
+        if cat_tools:
+            targets = list(cat_tools)
+            # Supplement registry from TOOL_DEFINITIONS for any missing entries
+            for n in cat_tools:
                 if n not in tools and n in TOOL_DEFINITIONS:
                     tools[n] = TOOL_DEFINITIONS[n]
         else:
-            targets = [n for n, c in tools.items() if c.get('category') == args.category]
+            # Fall back to filtering tools.json by category field
+            targets = [n for n, c in tools.items() if c.get("category") == args.category]
+        if not targets:
+            print(f"[!] Unknown category '{args.category}'. Run --categories to list valid ones.")
+            return
+
     elif args.tools:
         targets = args.tools
 
     if targets:
-        # Ensure dependencies first
         system.install_system_dependencies()
         system.check_go()
-        # Re-instantiate installer now that `tools` may have been supplemented
         installer = ReconRangerInstaller(tools)
+        env       = key_manager.get_env_vars()
 
-        env = key_manager.get_env_vars()
-        successes = []
-        failures = []
+        ok_list, fail_list = [], []
         for t in targets:
-            ok = installer.install_tool(t, env_vars=env)
-            if ok:
-                successes.append(t)
+            if installer.install_tool(t, env_vars=env):
+                ok_list.append(t)
             else:
-                failures.append(t)
+                fail_list.append(t)
 
-        # Summary of install results
-        print("\n🔔 Installation Summary")
-        print(f"- Requested: {len(targets)} tools")
-        print(f"- Succeeded: {len(successes)}")
-        print(f"- Failed: {len(failures)}")
-        if successes:
-            print(f"  ✅ Successes: {', '.join(successes)}")
-        if failures:
-            print(f"  ❌ Failures: {', '.join(failures)}")
+        print(f"\n{'─'*50}")
+        print(f"Requested : {len(targets)}")
+        print(f"Succeeded : {len(ok_list)}")
+        print(f"Failed    : {len(fail_list)}")
+        if ok_list:
+            print(f"  [✓] {', '.join(ok_list)}")
+        if fail_list:
+            print(f"  [✗] {', '.join(fail_list)}")
         return
 
     if args.check:
-        print(f"\n🔍 Installation Status:")
-        print(f"{'Tool':<18} {'Status':<12} {'Path'}")
-        print("-" * 50)
-        for name, cfg in tools.items():
-            import shutil
-            path = shutil.which(cfg['binary'])
-            status = "✅ Installed" if path else "❌ Missing"
-            print(f"{name:<18} {status:<12} {path or 'N/A'}")
+        _print_check(tools)
         return
 
     parser.print_help()
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _interactive_menu(args):
+    """Simple numbered menu shown when reconranger.py is invoked with no arguments."""
+    print(f"\nReconRanger v{VERSION} — Interactive Mode")
+    print("─" * 40)
+    menu = [
+        ("List all tools",        lambda: setattr(args, "list", True)),
+        ("List categories",       lambda: setattr(args, "categories", True)),
+        ("Install core toolkit",  lambda: setattr(args, "category", "core")),
+        ("Install by category",   lambda: setattr(args, "category", input("  Category: ").strip())),
+        ("Install specific tools",lambda: setattr(args, "tools", input("  Tools (space-separated): ").strip().split())),
+        ("Check install status",  lambda: setattr(args, "check", True)),
+        ("Manage API keys",       lambda: setattr(args, "api", True)),
+        ("Exit",                  lambda: sys.exit(0)),
+    ]
+    for i, (label, _) in enumerate(menu, 1):
+        print(f"  {i}) {label}")
+    choice = input("\nChoice: ").strip()
+    if choice.isdigit() and 1 <= int(choice) <= len(menu):
+        menu[int(choice) - 1][1]()
+    else:
+        print("Invalid choice.")
+        sys.exit(1)
+
+
+def _add_tool(tools: dict):
+    print("\nAdd new tool to registry:")
+    name    = input("  Name (slug): ").strip().lower()
+    if not name:
+        print("[!] Name required.")
+        return
+    ttype   = input("  Type [go/python/git/apt/ruby/cargo]: ").strip().lower()
+    package = input("  Package / repo URL: ").strip()
+    binary  = input("  Binary name: ").strip()
+    desc    = input("  Description: ").strip()
+    cat     = input("  Category: ").strip()
+    example = input("  Example command: ").strip()
+
+    entry = {"type": ttype, "binary": binary, "description": desc,
+             "category": cat, "example": example}
+    if ttype in ("go", "python", "ruby", "cargo"):
+        entry["package"] = package
+    elif ttype in ("git",):
+        entry["repo"] = package
+        entry["path"] = f"/opt/{name}"
+        entry["entrypoint"] = f"/opt/{name}/{binary}.py"
+
+    tools[name] = entry
+    save_tools(tools)
+    print(f"[✓] Added '{name}' to registry.")
+
+
+def _edit_tool(tools: dict, name: str):
+    if name not in tools:
+        print(f"[✗] '{name}' not found in registry.")
+        return
+
+    entry = tools[name]
+    print(f"\nEditing '{name}' — press Enter to keep current value.\n")
+    editable = ["type", "package", "repo", "binary", "description",
+                "category", "example", "path", "entrypoint", "post_install"]
+
+    for field in editable:
+        current = entry.get(field, "")
+        val = input(f"  {field} [{current}]: ").strip()
+        if val:
+            entry[field] = val
+
+    tools[name] = entry
+    save_tools(tools)
+    print(f"[✓] Updated '{name}'.")
+
+
+def _delete_tool(tools: dict, name: str):
+    if name not in tools:
+        print(f"[✗] '{name}' not found.")
+        return
+    confirm = input(f"Delete '{name}'? [y/N]: ").strip().lower()
+    if confirm == "y":
+        del tools[name]
+        save_tools(tools)
+        print(f"[✓] Deleted '{name}'.")
+    else:
+        print("Cancelled.")
+
+
+def _print_list(tools: dict):
+    print(f"\nReconRanger Registry — {len(tools)} tools\n")
+    print(f"{'#':<4} {'Name':<22} {'Category':<16} {'Type':<8} {'Description'}")
+    print("─" * 90)
+    for i, (name, cfg) in enumerate(sorted(tools.items()), 1):
+        print(f"{i:<4} {name:<22} {cfg.get('category',''):<16} "
+              f"{cfg.get('type',''):<8} {cfg.get('description','')[:45]}")
+
+
+def _print_categories():
+    print(f"\nAvailable Categories ({len(CATEGORIES)} total)\n")
+    print(f"{'Category':<18} {'Tools':<6} {'Members'}")
+    print("─" * 70)
+    for cat, members in CATEGORIES.items():
+        print(f"{cat:<18} {len(members):<6} {', '.join(members)}")
+
+
+def _print_check(tools: dict):
+    import shutil
+    print(f"\nInstallation Status — {len(tools)} tools\n")
+    print(f"{'Name':<22} {'Status':<14} {'Path'}")
+    print("─" * 70)
+    installed = 0
+    for name, cfg in sorted(tools.items()):
+        path = shutil.which(cfg.get("binary", name))
+        if path:
+            status = "[✓] Installed"
+            installed += 1
+        else:
+            status = "[✗] Missing"
+        print(f"{name:<22} {status:<14} {path or 'N/A'}")
+    print(f"\n{installed}/{len(tools)} tools installed.")
+
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n👋 Exiting...")
+        print("\n[!] Interrupted.")
         sys.exit(0)

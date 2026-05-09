@@ -7,16 +7,13 @@
     "example": "aidor -u https://target.com",
     "path": "/opt/AIDOR",
     "repo": "https://github.com/abdulahadtheCyber-pixel/AIDOR.git",
-    "requirements": [
-      "-r",
-      "/opt/AIDOR/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/AIDOR/requirements.txt"],
     "type": "git"
   },
   "amass": {
     "binary": "amass",
     "category": "core",
-    "description": "In-depth attack surface mapping with graph visualization",
+    "description": "In-depth attack surface mapping and graph visualization",
     "example": "amass enum -d target.com -o subs.txt",
     "package": "github.com/owasp-amass/amass/v4/cmd/amass@latest",
     "type": "go"
@@ -24,8 +21,8 @@
   "anew": {
     "binary": "anew",
     "category": "utils",
-    "description": "Append lines to a file, avoiding duplicates",
-    "example": "cat old.txt new.txt | anew all.txt",
+    "description": "Append new unique lines to a file, de-duplicating on the fly",
+    "example": "cat new.txt | anew all.txt",
     "package": "github.com/tomnomnom/anew@latest",
     "type": "go"
   },
@@ -33,28 +30,22 @@
     "binary": "arjun",
     "category": "web",
     "description": "HTTP parameter discovery suite",
-    "entrypoint": "/opt/Arjun/arjun.py",
-    "example": "python3 arjun.py -u https://target.com",
-    "path": "/opt/Arjun",
-    "repo": "https://github.com/s0md3v/Arjun.git",
-    "requirements": [
-      "-r",
-      "/opt/Arjun/requirements.txt"
-    ],
-    "type": "git"
+    "example": "arjun -u https://target.com",
+    "package": "arjun",
+    "type": "python"
   },
   "assetfinder": {
     "binary": "assetfinder",
     "category": "core",
     "description": "Find subdomains from Certificate Transparency logs",
     "example": "assetfinder --subs-only target.com",
-    "package": "github.com/tomnomnom/assetfinder",
+    "package": "github.com/tomnomnom/assetfinder@latest",
     "type": "go"
   },
   "bbot": {
     "binary": "bbot",
     "category": "core",
-    "description": "All-in-one recon framework (replaces 10+ tools; handles subdomains \u00e2\u2020\u2019 ports \u00e2\u2020\u2019 endpoints \u00e2\u2020\u2019 vulns recursively)",
+    "description": "All-in-one recon framework: subdomains, ports, endpoints, vulns in one run",
     "example": "bbot -t example.com -m subfinder httpx nuclei",
     "package": "bbot",
     "type": "python"
@@ -63,19 +54,29 @@
     "apt": "cewl",
     "binary": "cewl",
     "category": "web",
-    "description": "Custom wordlist generator from website spidering",
+    "description": "Custom wordlist generator built by spidering a target website",
     "example": "cewl -d 2 -m 8 -w custom.txt https://target.com",
     "package": "cewl",
     "type": "apt"
   },
   "cloud_enum": {
-    "apt": null,
     "binary": "cloud_enum",
     "category": "cloud",
-    "description": "Multi-cloud OSINT for AWS/Azure/GCP public resources",
+    "description": "Multi-cloud OSINT tool for AWS, Azure, and GCP public resource discovery",
     "example": "cloud_enum -k target -t aws,azure,gcp",
     "package": "cloud_enum",
     "type": "python"
+  },
+  "corsy": {
+    "binary": "corsy",
+    "category": "vuln",
+    "description": "CORS misconfiguration scanner",
+    "entrypoint": "/opt/Corsy/corsy.py",
+    "example": "python3 corsy.py -u https://target.com",
+    "path": "/opt/Corsy",
+    "repo": "https://github.com/s0md3v/Corsy.git",
+    "requirements": ["-r", "/opt/Corsy/requirements.txt"],
+    "type": "git"
   },
   "cvinder": {
     "binary": "cvinder",
@@ -85,10 +86,7 @@
     "example": "cvinder -d target.com",
     "path": "/opt/CVINDER",
     "repo": "https://github.com/3a7/CVINDER.git",
-    "requirements": [
-      "-r",
-      "/opt/CVINDER/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/CVINDER/requirements.txt"],
     "type": "git"
   },
   "dalfox": {
@@ -96,35 +94,32 @@
     "category": "vuln",
     "description": "Modern XSS scanner and parameter analyzer",
     "example": "dalfox url https://target.com",
-    "package": "github.com/dalfox/dalfox/v2@latest",
+    "package": "github.com/hahwul/dalfox/v2@latest",
     "type": "go"
   },
   "dirsearch": {
     "binary": "dirsearch",
-    "category": "utils",
-    "description": "Directory brute-forcing",
+    "category": "fuzzing",
+    "description": "Web path discovery by brute-forcing directories and files",
     "entrypoint": "/opt/dirsearch/dirsearch.py",
-    "example": "python3 dirsearch.py -u https://target.com",
+    "example": "dirsearch -u https://target.com",
     "path": "/opt/dirsearch",
     "repo": "https://github.com/maurosoria/dirsearch.git",
-    "requirements": [
-      "-r",
-      "/opt/dirsearch/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/dirsearch/requirements.txt"],
     "type": "git"
   },
   "dnsx": {
     "binary": "dnsx",
     "category": "core",
-    "description": "Multi-purpose DNS toolkit for enumeration and resolution",
+    "description": "Multi-purpose DNS toolkit for resolution, enumeration, and brute-force",
     "example": "cat subs.txt | dnsx -a -resp -silent",
-    "package": "github.com/projectdiscovery/dnsx/cmd/dnsx",
+    "package": "github.com/projectdiscovery/dnsx/cmd/dnsx@latest",
     "type": "go"
   },
   "dotdotpwn": {
     "binary": "dotdotpwn",
     "category": "vuln",
-    "description": "Path traversal fuzzer",
+    "description": "Directory traversal and path traversal fuzzer",
     "entrypoint": "/opt/dotdotpwn/dotdotpwn.pl",
     "example": "perl dotdotpwn.pl -h https://target.com",
     "path": "/opt/dotdotpwn",
@@ -134,26 +129,33 @@
   "droopescan": {
     "binary": "droopescan",
     "category": "cms",
-    "description": "CMS scanner for Drupal and related platforms",
-    "example": "python3 droopescan scan https://target.com",
-    "path": "/opt/droopescan",
-    "repo": "https://github.com/droope/droopescan.git",
-    "type": "git"
+    "description": "CMS scanner for Drupal, SilverStripe, WordPress, and Joomla",
+    "example": "droopescan scan drupal -u https://target.com",
+    "package": "droopescan",
+    "type": "python"
   },
   "enumrust": {
     "binary": "enumrust",
     "build_cmd": "cargo build --release",
     "category": "utils",
-    "description": "Rust-based enumeration tool",
+    "description": "Rust-based fast subdomain and host enumeration",
     "example": "./enumrust target.com",
     "path": "/opt/enumrust",
     "repo": "https://github.com/KingOfBugbounty/enumrust.git",
     "type": "cargo"
   },
+  "feroxbuster": {
+    "binary": "feroxbuster",
+    "category": "fuzzing",
+    "description": "Fast, recursive content discovery tool written in Rust",
+    "example": "feroxbuster -u https://target.com -w wordlist.txt --depth 3",
+    "package": "feroxbuster",
+    "type": "cargo"
+  },
   "ffuf": {
     "binary": "ffuf",
     "category": "core",
-    "description": "Fast web fuzzer for directory brute-forcing",
+    "description": "Fast web fuzzer for directories, files, and parameters",
     "example": "ffuf -w wordlist.txt -u https://target.com/FUZZ",
     "package": "github.com/ffuf/ffuf/v2@latest",
     "type": "go"
@@ -161,40 +163,45 @@
   "gau": {
     "binary": "gau",
     "category": "osint",
-    "description": "Get all known URLs from AlienVault's Open Threat Exchange, the Wayback Machine, and Common Crawl",
+    "description": "Fetch known URLs from AlienVault OTX, Wayback Machine, and Common Crawl",
     "example": "gau example.com",
     "package": "github.com/lc/gau/v2/cmd/gau@latest",
     "type": "go"
   },
   "gf": {
-    "apt": null,
     "binary": "gf",
     "category": "utils",
-    "description": "Pattern finder for grep",
-    "example": "cat response.txt | gf s3",
+    "description": "Grep wrapper with named pattern sets for bug bounty workflows",
+    "example": "cat urls.txt | gf sqli",
     "package": "github.com/tomnomnom/gf@latest",
+    "post_install": "git clone --depth 1 https://github.com/1ndianl33t/Gf-Patterns /tmp/gf-patterns && mkdir -p ~/.gf && cp /tmp/gf-patterns/*.json ~/.gf/",
     "type": "go"
   },
   "ghauri": {
     "binary": "ghauri",
     "category": "vuln",
-    "description": "SQL injection scanner",
+    "description": "Advanced SQL injection detection and exploitation tool",
     "entrypoint": "/opt/ghauri/ghauri.py",
     "example": "python3 ghauri.py -u https://target.com",
     "path": "/opt/ghauri",
     "repo": "https://github.com/r0oth3x49/ghauri.git",
-    "requirements": [
-      "-r",
-      "/opt/ghauri/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/ghauri/requirements.txt"],
     "type": "git"
+  },
+  "git-dumper": {
+    "binary": "git-dumper",
+    "category": "secrets",
+    "description": "Dump an exposed .git directory from a web server",
+    "example": "git-dumper https://target.com/.git ./output",
+    "package": "git-dumper",
+    "type": "python"
   },
   "githound": {
     "binary": "githound",
     "build_cmd": "go build -o githound .",
-    "category": "osint",
-    "description": "GitHub secrets hunter and sensitive data finder",
-    "example": "githound --org target-org --keywords api_key,password",
+    "category": "secrets",
+    "description": "GitHub secrets hunter — scans repos for leaked credentials and keys",
+    "example": "githound --org target-org --keywords api_key,secret",
     "path": "/opt/git-hound",
     "repo": "https://github.com/tillson/git-hound.git",
     "type": "git"
@@ -202,166 +209,174 @@
   "github-dorks": {
     "binary": "github-dorks",
     "category": "osint",
-    "description": "GitHub dorking for sensitive data exposure",
+    "description": "GitHub dorking tool to surface sensitive data in public repositories",
     "entrypoint": "/opt/github-dorks/github-dorks.py",
     "example": "github-dorks -u target-org",
     "path": "/opt/github-dorks",
     "repo": "https://github.com/techgaun/github-dorks.git",
-    "requirements": [
-      "-r",
-      "/opt/github-dorks/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/github-dorks/requirements.txt"],
     "type": "git"
   },
   "github-subdomains": {
-    "apt": null,
     "binary": "github-subdomains",
     "category": "subdomains",
-    "description": "Find subdomains from GitHub commits and repos",
-    "example": "github-subdomains -d target.com -t github_token",
+    "description": "Find subdomains leaked in GitHub commits and repository content",
+    "example": "github-subdomains -d target.com -t GITHUB_TOKEN",
     "package": "github.com/gwen001/github-subdomains@latest",
+    "type": "go"
+  },
+  "gitleaks": {
+    "binary": "gitleaks",
+    "category": "secrets",
+    "description": "Scan git repos, files, and directories for hardcoded secrets",
+    "example": "gitleaks detect --source . -v",
+    "package": "github.com/gitleaks/gitleaks/v8@latest",
+    "type": "go"
+  },
+  "gobuster": {
+    "binary": "gobuster",
+    "category": "fuzzing",
+    "description": "Directory, DNS, and vhost brute-forcing tool",
+    "example": "gobuster dir -u https://target.com -w wordlist.txt",
+    "package": "github.com/OJ/gobuster/v3@latest",
     "type": "go"
   },
   "gospider": {
     "binary": "gospider",
     "category": "core",
-    "description": "Fast web spider for endpoint discovery",
+    "description": "Fast web spider for endpoint and link discovery",
     "example": "gospider -s https://target.com -o output",
-    "package": "github.com/jaeles-project/gospider",
+    "package": "github.com/jaeles-project/gospider@latest",
+    "type": "go"
+  },
+  "gowitness": {
+    "binary": "gowitness",
+    "category": "fingerprinting",
+    "description": "Web screenshot utility for visual recon of live hosts at scale",
+    "example": "gowitness scan file -f alive.txt --screenshot-path ./screens",
+    "package": "github.com/sensepost/gowitness@latest",
     "type": "go"
   },
   "graphqlmap": {
     "binary": "graphqlmap",
     "category": "vuln",
-    "description": "GraphQL security testing",
+    "description": "GraphQL endpoint enumeration and injection testing",
     "entrypoint": "/opt/GraphQLmap/graphqlmap.py",
     "example": "python3 graphqlmap.py -u https://target.com/graphql",
     "path": "/opt/GraphQLmap",
     "repo": "https://github.com/swisskyrepo/GraphQLmap.git",
-    "requirements": [
-      "-r",
-      "/opt/GraphQLmap/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/GraphQLmap/requirements.txt"],
     "type": "git"
   },
   "graphw00f": {
     "binary": "graphw00f",
-    "category": "vuln",
-    "description": "GraphQL fingerprinting",
+    "category": "fingerprinting",
+    "description": "GraphQL server engine fingerprinting and detection",
     "entrypoint": "/opt/graphw00f/graphw00f",
-    "example": "graphw00f https://target.com/graphql",
+    "example": "graphw00f -t https://target.com/graphql",
     "path": "/opt/graphw00f",
     "repo": "https://github.com/dolevf/graphw00f.git",
-    "requirements": [
-      "-r",
-      "/opt/graphw00f/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/graphw00f/requirements.txt"],
     "type": "git"
+  },
+  "hakoriginfinder": {
+    "binary": "hakoriginfinder",
+    "category": "fingerprinting",
+    "description": "Discover the origin IP address behind CDN and WAF providers",
+    "example": "echo target.com | hakoriginfinder",
+    "package": "github.com/hakluke/hakoriginfinder@latest",
+    "type": "go"
   },
   "httpx": {
     "binary": "httpx",
     "category": "core",
-    "description": "HTTP toolkit for probing, fingerprinting, and crawling",
-    "example": "cat subs.txt | httpx -silent -status-code",
+    "description": "HTTP probing toolkit: live host detection, status codes, titles, and tech detection",
+    "example": "cat subs.txt | httpx -silent -status-code -title -tech-detect",
     "package": "github.com/projectdiscovery/httpx/cmd/httpx@latest",
     "type": "go"
   },
   "interactsh": {
-    "apt": null,
     "binary": "interactsh-client",
     "category": "utils",
-    "description": "Out-of-band interaction client for blind testing",
-    "example": "interactsh-client",
-    "package": "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest",
-    "type": "go"
-  },
-  "interactsh-client": {
-    "binary": "interactsh-client",
-    "category": "utils",
-    "description": "Client for OOB interaction detection",
-    "example": "interactsh-client",
+    "description": "Out-of-band interaction client for blind SSRF, XXE, and OOB vulnerability detection",
+    "example": "interactsh-client -v",
     "package": "github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest",
     "type": "go"
   },
   "jeeves": {
     "binary": "jeeves",
     "category": "osint",
-    "description": "OSINT automation tool for reconnaissance",
+    "description": "OSINT automation tool for passive reconnaissance",
     "entrypoint": "/opt/jeeves/jeeves.py",
     "example": "python3 jeeves.py -d target.com",
     "path": "/opt/jeeves",
     "repo": "https://github.com/ferreiraklet/Jeeves.git",
-    "requirements": [
-      "-r",
-      "/opt/jeeves/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/jeeves/requirements.txt"],
     "type": "git"
   },
   "jsecret": {
     "binary": "jsecret",
     "category": "js",
-    "description": "JavaScript secret and API key finder",
+    "description": "Extract API keys and secrets embedded in JavaScript files",
     "entrypoint": "/opt/jsecret/jsecret.py",
     "example": "jsecret -u https://target.com",
     "path": "/opt/jsecret",
     "repo": "https://github.com/raoufmaklouf/jsecret.git",
-    "requirements": [
-      "-r",
-      "/opt/jsecret/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/jsecret/requirements.txt"],
     "type": "git"
   },
   "jsfinder": {
     "binary": "jsfinder",
     "category": "js",
-    "description": "JavaScript secrets finder",
+    "description": "Extract URLs and subdomains from JavaScript files",
     "entrypoint": "/opt/jsfinder/JSFinder.py",
     "example": "python3 JSFinder.py -u https://target.com",
     "path": "/opt/jsfinder",
     "repo": "https://github.com/0x240x23elu/jsfinder.git",
-    "requirements": [
-      "-r",
-      "/opt/jsfinder/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/jsfinder/requirements.txt"],
     "type": "git"
   },
   "jsleak": {
     "binary": "jsleak",
     "category": "js",
-    "description": "JavaScript leak scanner",
-    "entrypoint": "/opt/jsleak/jsleak.py",
-    "example": "python3 jsleak.py -u https://target.com",
-    "path": "/opt/jsleak",
-    "repo": "https://github.com/003random/jsleak.git",
-    "requirements": [
-      "-r",
-      "/opt/jsleak/requirements.txt"
-    ],
-    "type": "git"
+    "description": "Scan JavaScript files for secrets, endpoints, and sensitive strings",
+    "example": "cat js_urls.txt | jsleak",
+    "package": "github.com/channyein1337/jsleak@latest",
+    "type": "go"
   },
   "jsluice": {
-    "apt": null,
     "binary": "jsluice",
     "category": "js",
-    "description": "JavaScript link extractor",
-    "example": "cat urls.txt | jsluice",
+    "description": "Extract URLs, paths, and secrets from JavaScript source at scale",
+    "example": "cat js_files.txt | jsluice urls",
     "package": "github.com/BishopFox/jsluice/cmd/jsluice@latest",
     "type": "go"
+  },
+  "jwt_tool": {
+    "binary": "jwt_tool",
+    "category": "vuln",
+    "description": "Test, tamper, and crack JSON Web Tokens for auth bypass vulnerabilities",
+    "entrypoint": "/opt/jwt_tool/jwt_tool.py",
+    "example": "python3 jwt_tool.py <JWT> -T",
+    "path": "/opt/jwt_tool",
+    "repo": "https://github.com/ticarpi/jwt_tool.git",
+    "requirements": ["-r", "/opt/jwt_tool/requirements.txt"],
+    "type": "git"
   },
   "katana": {
     "binary": "katana",
     "category": "core",
-    "description": "Next-gen crawling and spidering framework",
-    "example": "katana -u https://target.com -silent -depth 3 -js-crawl",
+    "description": "Next-gen crawling framework with JavaScript rendering and passive mode",
+    "example": "katana -u https://target.com -depth 3 -js-crawl -silent",
     "package": "github.com/projectdiscovery/katana/cmd/katana@latest",
     "type": "go"
   },
   "kiterunner": {
     "binary": "kr",
-    "build_cmd": "go build -o kr ./cmd/kr",
-    "category": "web",
-    "description": "Content discovery framework",
-    "example": "kr scan https://target.com",
+    "build_cmd": "make build",
+    "category": "fuzzing",
+    "description": "Context-aware API route discovery using real-world API wordlists",
+    "example": "kr scan https://target.com -w routes-small.kite",
     "path": "/opt/kiterunner",
     "repo": "https://github.com/assetnote/kiterunner.git",
     "type": "git"
@@ -369,33 +384,28 @@
   "linkfinder": {
     "binary": "linkfinder",
     "category": "js",
-    "description": "Discover hidden endpoints in JavaScript files",
+    "description": "Discover hidden endpoints and parameters in JavaScript files",
     "entrypoint": "/opt/LinkFinder/linkfinder.py",
-    "example": "linkfinder -i https://target.com/main.js -o cli",
+    "example": "python3 linkfinder.py -i https://target.com/main.js -o cli",
     "path": "/opt/LinkFinder",
-    "post_clone": "npm install --silent",
     "repo": "https://github.com/GerbenJavado/LinkFinder.git",
-    "requirements": [
-      "-r",
-      "/opt/LinkFinder/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/LinkFinder/requirements.txt"],
     "type": "git"
   },
   "masscan": {
     "binary": "masscan",
-    "build_cmd": "make && make install",
+    "build_cmd": "make -j$(nproc)",
     "category": "ports",
-    "description": "High-speed port scanner",
-    "example": "masscan -p1-65535 target.com",
+    "description": "Internet-scale port scanner — all 65535 ports in minutes",
+    "example": "masscan -p1-65535 --rate=10000 target.com",
     "path": "/opt/masscan",
     "repo": "https://github.com/robertdavidgraham/masscan.git",
     "type": "git"
   },
   "metabigor": {
-    "apt": null,
     "binary": "metabigor",
     "category": "ports",
-    "description": "Network intelligence for ASN and IP range discovery",
+    "description": "Network intelligence: ASN lookup, IP range discovery, and CIDR enumeration",
     "example": "metabigor net -d target.com",
     "package": "github.com/j3ssie/metabigor@latest",
     "type": "go"
@@ -403,7 +413,7 @@
   "metasploit-framework": {
     "binary": "msfconsole",
     "category": "vuln",
-    "description": "Complete penetration testing framework",
+    "description": "Full-featured penetration testing and exploitation framework",
     "entrypoint": "/opt/metasploit-framework/msfconsole",
     "example": "msfconsole",
     "path": "/opt/metasploit-framework",
@@ -414,8 +424,8 @@
   "naabu": {
     "binary": "naabu",
     "category": "core",
-    "description": "Fast port scanner for network reconnaissance",
-    "example": "naabu -host target.com -p 80,443,8080,8443",
+    "description": "Fast SYN/CONNECT port scanner built for recon pipelines",
+    "example": "naabu -host target.com -top-ports 1000 -silent",
     "package": "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest",
     "type": "go"
   },
@@ -423,72 +433,80 @@
     "apt": "nikto",
     "binary": "nikto",
     "category": "cms",
-    "description": "Web server scanner",
+    "description": "Web server misconfiguration and known vulnerability scanner",
     "example": "nikto -h https://target.com",
     "package": "nikto",
+    "type": "apt"
+  },
+  "nmap": {
+    "apt": "nmap",
+    "binary": "nmap",
+    "category": "ports",
+    "description": "Industry-standard network discovery, port scanning, and service detection",
+    "example": "nmap -sV -sC -p- target.com",
+    "package": "nmap",
     "type": "apt"
   },
   "nosqlmap": {
     "binary": "nosqlmap",
     "category": "vuln",
-    "description": "NoSQL database injection",
+    "description": "Automated NoSQL injection and exploitation tool for MongoDB, CouchDB, and Redis",
     "entrypoint": "/opt/NoSQLMap/nosqlmap.py",
     "example": "python3 nosqlmap.py -u https://target.com",
     "path": "/opt/NoSQLMap",
     "repo": "https://github.com/codingo/NoSQLMap.git",
-    "requirements": [
-      "-r",
-      "/opt/NoSQLMap/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/NoSQLMap/requirements.txt"],
     "type": "git"
   },
   "notify": {
     "binary": "notify",
     "category": "utils",
-    "description": "Real-time notifications for all your recon workflow",
-    "example": "echo 'New subdomain found!' | notify -silent",
+    "description": "Stream tool output as real-time alerts to Slack, Discord, or Telegram",
+    "example": "subfinder -d target.com | notify -silent",
     "package": "github.com/projectdiscovery/notify/cmd/notify@latest",
     "type": "go"
   },
   "nuclei": {
     "binary": "nuclei",
     "category": "core",
-    "description": "Fast vulnerability scanner with 10,000+ community templates",
+    "description": "Template-based vulnerability scanner with 9000+ community templates",
     "example": "cat alive.txt | nuclei -t exposures/ -severity critical,high",
     "package": "github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest",
-    "post_install": "nuclei -ut -silent",
+    "post_install": "nuclei -update-templates -silent",
     "type": "go"
   },
   "paramspider": {
     "binary": "paramspider",
-    "category": "osint",
-    "description": "Mine parameters from web archives",
-    "entrypoint": "/opt/ParamSpider/paramspider.py",
+    "category": "web",
+    "description": "Mine parameterised URLs from web archives for fuzzing and injection testing",
     "example": "paramspider -d target.com",
-    "path": "/opt/ParamSpider",
-    "repo": "https://github.com/devanshbatham/ParamSpider.git",
-    "requirements": [
-      "-r",
-      "/opt/ParamSpider/requirements.txt"
-    ],
-    "type": "git"
+    "package": "paramspider",
+    "type": "python"
   },
   "pegpon": {
     "binary": "pegpon",
     "category": "automation",
-    "description": "Advanced Bash-based automation tool for subdomain enumeration, fuzzing, and web reconnaissance.",
+    "description": "Bash-based automation for subdomain enumeration, fuzzing, and web recon",
     "entrypoint": "/opt/PEGPON/pegpon",
     "example": "pegpon -d example.com",
     "path": "/opt/PEGPON",
     "repo": "https://github.com/LABx-EnV/PEGPON.git",
     "type": "git"
   },
+  "puredns": {
+    "binary": "puredns",
+    "category": "subdomains",
+    "description": "Reliable subdomain brute-force with wildcard filtering via massdns",
+    "example": "puredns bruteforce wordlist.txt target.com",
+    "package": "github.com/d3mondev/puredns/v2@latest",
+    "type": "go"
+  },
   "reconftw": {
     "binary": "reconftw",
-    "category": "utils",
-    "description": "Automated recon framework",
+    "category": "automation",
+    "description": "Full-cycle recon automation wrapping 35+ tools into one workflow",
     "entrypoint": "/opt/reconftw/reconftw.sh",
-    "example": "./reconftw.sh -d target.com",
+    "example": "./reconftw.sh -d target.com -a",
     "path": "/opt/reconftw",
     "post_clone": "./install.sh",
     "repo": "https://github.com/six2dez/reconftw.git",
@@ -497,31 +515,35 @@
   "s3scanner": {
     "binary": "s3scanner",
     "category": "cloud",
-    "description": "AWS S3 bucket scanner",
-    "entrypoint": "/opt/S3Scanner/s3scanner.py",
-    "example": "python3 s3scanner.py buckets.txt",
-    "path": "/opt/S3Scanner",
-    "repo": "https://github.com/sa7mon/S3Scanner.git",
-    "requirements": [
-      "-r",
-      "/opt/S3Scanner/requirements.txt"
-    ],
+    "description": "Find and enumerate misconfigured open S3 buckets",
+    "example": "s3scanner scan --bucket target-bucket",
+    "package": "s3scanner",
+    "type": "python"
+  },
+  "secretfinder": {
+    "binary": "secretfinder",
+    "category": "secrets",
+    "description": "Regex-based API key and secret scanner across JavaScript and HTML",
+    "entrypoint": "/opt/SecretFinder/SecretFinder.py",
+    "example": "python3 SecretFinder.py -i https://target.com/main.js -o cli",
+    "path": "/opt/SecretFinder",
+    "repo": "https://github.com/m4ll0k/SecretFinder.git",
+    "requirements": ["-r", "/opt/SecretFinder/requirements.txt"],
     "type": "git"
   },
   "seclists": {
     "binary": "seclists",
     "category": "utils",
-    "description": "Collection of security wordlists",
-    "example": "ls /opt/seclists/Discovery/Web-Content/common.txt",
+    "description": "Daniel Miessler's curated wordlist collection for all recon phases",
+    "example": "ffuf -w /opt/seclists/Discovery/Web-Content/common.txt -u https://target.com/FUZZ",
     "path": "/opt/seclists",
     "repo": "https://github.com/danielmiessler/SecLists.git",
     "type": "git"
   },
   "shuffledns": {
-    "apt": "shuffledns",
     "binary": "shuffledns",
     "category": "subdomains",
-    "description": "MassDNS wrapper for subdomain brute-forcing",
+    "description": "MassDNS wrapper for mass subdomain brute-forcing and resolution",
     "example": "shuffledns -list subs.txt -d target.com -r resolvers.txt",
     "package": "github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest",
     "type": "go"
@@ -529,32 +551,40 @@
   "sqlmap": {
     "binary": "sqlmap",
     "category": "vuln",
-    "description": "Automatic SQL injection and database takeover tool",
+    "description": "Automated SQL injection detection and database takeover",
     "entrypoint": "/opt/sqlmap/sqlmap.py",
-    "example": "sqlmap -u https://target.com/search?q=test --batch",
+    "example": "sqlmap -u 'https://target.com/search?q=test' --batch --dbs",
     "path": "/opt/sqlmap",
     "repo": "https://github.com/sqlmapproject/sqlmap.git",
+    "type": "git"
+  },
+  "ssrfmap": {
+    "binary": "ssrfmap",
+    "category": "vuln",
+    "description": "Automatic SSRF detection and exploitation — supports 17 payloads",
+    "entrypoint": "/opt/SSRFmap/ssrfmap.py",
+    "example": "python3 ssrfmap.py -r request.txt -p url",
+    "path": "/opt/SSRFmap",
+    "repo": "https://github.com/swisskyrepo/SSRFmap.git",
+    "requirements": ["-r", "/opt/SSRFmap/requirements.txt"],
     "type": "git"
   },
   "subdomainizer": {
     "binary": "subdomainizer",
     "category": "core",
-    "description": "Find interesting subdomains and secrets in external resources",
+    "description": "Find subdomains and secrets buried in JavaScript and external resources",
     "entrypoint": "/opt/SubDomainizer/SubDomainizer.py",
     "example": "subdomainizer -u https://target.com -o results.txt",
     "path": "/opt/SubDomainizer",
     "repo": "https://github.com/nsonaniya2010/SubDomainizer.git",
-    "requirements": [
-      "-r",
-      "/opt/SubDomainizer/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/SubDomainizer/requirements.txt"],
     "type": "git"
   },
   "subfinder": {
     "binary": "subfinder",
     "category": "core",
-    "description": "Fast subdomain discovery using 30+ passive sources",
-    "example": "subfinder -d target.com -silent -o subs.txt",
+    "description": "Passive subdomain discovery using 30+ sources including Shodan and VirusTotal",
+    "example": "subfinder -d target.com -silent -all -o subs.txt",
     "package": "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest",
     "type": "go"
   },
@@ -562,8 +592,8 @@
     "binary": "subjack",
     "build_cmd": "go build -o subjack .",
     "category": "takeover",
-    "description": "Subdomain takeover tool",
-    "example": "subjack -w subs.txt",
+    "description": "Subdomain takeover detection across 50+ services",
+    "example": "subjack -w subs.txt -t 100 -timeout 30",
     "path": "/opt/subjack",
     "repo": "https://github.com/haccer/subjack.git",
     "type": "git"
@@ -571,104 +601,87 @@
   "sublist3r": {
     "binary": "sublist3r",
     "category": "core",
-    "description": "Fast subdomain enumeration using OSINT sources",
+    "description": "Subdomain enumeration via OSINT: Google, Bing, DNSdumpster, and more",
     "example": "sublist3r -d target.com -o subs.txt",
-    "package": "sublist3r==1.0",
+    "package": "sublist3r",
     "type": "python"
   },
   "subzy": {
     "binary": "subzy",
-    "category": "core",
-    "description": "Fast subdomain takeover scanner",
-    "example": "subzy -list subs.txt",
-    "package": "github.com/PentestPad/subzy",
+    "category": "takeover",
+    "description": "Fast subdomain takeover checker against 100+ fingerprint signatures",
+    "example": "subzy run --targets subs.txt",
+    "package": "github.com/PentestPad/subzy@latest",
+    "type": "go"
+  },
+  "trufflehog": {
+    "binary": "trufflehog",
+    "category": "secrets",
+    "description": "Deep secret scanning across git history, S3, filesystems, and more",
+    "example": "trufflehog git https://github.com/target/repo --only-verified",
+    "package": "github.com/trufflesecurity/trufflehog/v3@latest",
     "type": "go"
   },
   "uro": {
-    "apt": null,
     "binary": "uro",
     "category": "utils",
-    "description": "URL recon tool",
-    "example": "uro -u https://target.com",
-    "package": "github.com/s0md3v/uro@latest",
-    "type": "go"
+    "description": "Deduplicate and clean URL lists by stripping redundant parameters",
+    "example": "cat urls.txt | uro",
+    "package": "uro",
+    "type": "python"
   },
   "virustotalx": {
     "binary": "virustotalx",
     "category": "osint",
-    "description": "VirusTotal intelligence tool for domain/IP/URL analysis",
+    "description": "VirusTotal intelligence for domain, IP, URL, and file analysis",
     "entrypoint": "/opt/virustotalx/virustotalx.py",
-    "example": "virustotalx -d target.com --api-key YOUR_VT_KEY",
+    "example": "virustotalx -d target.com --api-key VT_KEY",
     "path": "/opt/virustotalx",
     "repo": "https://github.com/ru3y7/virustotalx.git",
-    "requirements": [
-      "-r",
-      "/opt/virustotalx/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/virustotalx/requirements.txt"],
     "type": "git"
   },
   "wafw00f": {
     "binary": "wafw00f",
-    "category": "vuln",
-    "description": "WAF detection and identification",
-    "entrypoint": "/opt/wafw00f/wafw00f",
+    "category": "fingerprinting",
+    "description": "WAF detection and fingerprinting — identifies 180+ WAF products",
     "example": "wafw00f https://target.com",
-    "path": "/opt/wafw00f",
-    "repo": "https://github.com/EnableSecurity/wafw00f.git",
-    "requirements": [
-      "-r",
-      "/opt/wafw00f/requirements.txt"
-    ],
-    "type": "git"
+    "package": "wafw00f",
+    "type": "python"
   },
   "waybackurls": {
     "binary": "waybackurls",
     "category": "osint",
-    "description": "Fetch all known URLs from Wayback Machine for a domain",
+    "description": "Fetch all archived URLs for a domain from the Wayback Machine",
     "example": "echo example.com | waybackurls",
     "package": "github.com/tomnomnom/waybackurls@latest",
     "type": "go"
   },
   "wpscan": {
-    "apt": null,
     "binary": "wpscan",
     "category": "cms",
-    "description": "WordPress security scanner",
-    "example": "wpscan --url https://target.com",
+    "description": "WordPress security scanner — themes, plugins, users, and CVEs",
+    "example": "wpscan --url https://target.com --enumerate vp,vt,u",
     "package": "wpscan",
     "type": "ruby"
   },
   "x8": {
     "binary": "x8",
-    "build_cmd": "cargo build --release",
     "category": "web",
-    "description": "Advanced parameter discovery tool written in Rust.",
-    "example": "x8 -u https://example.com/ -w wordlist.txt",
-    "path": "/opt/x8",
-    "repo": "https://github.com/Sh1Yo/x8",
-    "type": "git"
-  },
-  "xspear": {
-    "apt": null,
-    "binary": "xspear",
-    "category": "vuln",
-    "description": "XSS scanner with Selenium",
-    "example": "xspear -u https://target.com",
-    "package": "XSpear",
-    "type": "ruby"
+    "description": "Hidden HTTP parameter discovery written in Rust — fast and precise",
+    "example": "x8 -u https://target.com/ -w wordlist.txt",
+    "package": "x8",
+    "type": "cargo"
   },
   "xsstrike": {
     "binary": "xsstrike",
     "category": "vuln",
-    "description": "Advanced XSS detection suite",
+    "description": "Advanced XSS detection with DOM analysis, fuzzing, and WAF bypass",
     "entrypoint": "/opt/XSStrike/xsstrike.py",
-    "example": "xsstrike -u https://target.com/search?q=test",
+    "example": "python3 xsstrike.py -u 'https://target.com/search?q=test'",
     "path": "/opt/XSStrike",
     "repo": "https://github.com/s0md3v/XSStrike.git",
-    "requirements": [
-      "-r",
-      "/opt/XSStrike/requirements.txt"
-    ],
+    "requirements": ["-r", "/opt/XSStrike/requirements.txt"],
     "type": "git"
   }
 }

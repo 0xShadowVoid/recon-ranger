@@ -1,93 +1,92 @@
-#!/bin/bash
-# ReconRanger v2.0 Bootstrapper
-# One-time dependency setup for any Linux distribution
+#!/usr/bin/env bash
+# ReconRanger v4.0 — Bootstrap Installer
+# Run once to install system dependencies, then use reconranger.py for tools.
+set -euo pipefail
 
-set -e
+VERSION="4.0"
+BOLD="\033[1m"
+GREEN="\033[92m"
+YELLOW="\033[93m"
+RED="\033[91m"
+RESET="\033[0m"
 
-echo "🦅 ReconRanger v2.0 - Surgical Recon Toolkit"
-echo "=========================================="
+echo -e "${BOLD}ReconRanger v${VERSION} — Bootstrap Installer${RESET}"
+echo "=================================================="
 
-# Install system dependencies
-echo "📦 Installing system dependencies..."
-if command -v apt &> /dev/null; then
-    echo "🔧 Detected Debian/Ubuntu-based system"
-    if [[ $EUID -eq 0 ]]; then
-        apt update
-        apt install -y python3 python3-pip python3-venv golang-go build-essential git curl wget npm nodejs ruby-dev cargo
+# ── Detect package manager ────────────────────────────────────────────────────
+install_deps() {
+    local pkgs="python3 python3-pip python3-venv golang-go build-essential git curl wget ruby-full cargo rustup"
+
+    if command -v apt-get &>/dev/null; then
+        echo -e "${GREEN}[→] apt detected (Debian/Ubuntu/Kali/Parrot)${RESET}"
+        apt-get update -qq
+        apt-get install -y -q $pkgs
+    elif command -v dnf &>/dev/null; then
+        echo -e "${GREEN}[→] dnf detected (Fedora/RHEL)${RESET}"
+        dnf install -y python3 python3-pip golang git curl wget ruby ruby-devel cargo rust
+    elif command -v yum &>/dev/null; then
+        echo -e "${GREEN}[→] yum detected (CentOS/RHEL)${RESET}"
+        yum install -y python3 python3-pip golang git curl wget ruby ruby-devel cargo rust
+    elif command -v pacman &>/dev/null; then
+        echo -e "${GREEN}[→] pacman detected (Arch)${RESET}"
+        pacman -Syu --noconfirm python python-pip go git curl wget ruby rust
     else
-        echo "ℹ️  Running as user - some packages may need sudo"
-        echo "Please run: sudo apt update && sudo apt install -y python3 python3-pip python3-venv golang-go build-essential git curl wget npm nodejs ruby-dev cargo"
+        echo -e "${RED}[!] Unknown distro. Install manually: python3 pip go git ruby cargo${RESET}"
+        exit 1
     fi
-elif command -v yum &> /dev/null; then
-    echo "🔧 Detected RedHat/CentOS/Fedora system"
-    if [[ $EUID -eq 0 ]]; then
-        yum update -y
-        yum install -y python3 python3-pip python3-venv golang build-essential git curl wget npm nodejs ruby ruby-devel cargo
-    else
-        echo "ℹ️  Running as user - some packages may need sudo"
-        echo "Please run: sudo yum update -y && sudo yum install -y python3 python3-pip python3-venv golang build-essential git curl wget npm nodejs ruby ruby-devel cargo"
-    fi
-elif command -v dnf &> /dev/null; then
-    echo "🔧 Detected Fedora system"
-    if [[ $EUID -eq 0 ]]; then
-        dnf update -y
-        dnf install -y python3 python3-pip python3-venv golang build-essential git curl wget npm nodejs ruby ruby-devel cargo
-    else
-        echo "ℹ️  Running as user - some packages may need sudo"
-        echo "Please run: sudo dnf update -y && sudo dnf install -y python3 python3-pip python3-venv golang build-essential git curl wget npm nodejs ruby ruby-devel cargo"
-    fi
-elif command -v pacman &> /dev/null; then
-    echo "🔧 Detected Arch Linux system"
-    if [[ $EUID -eq 0 ]]; then
-        pacman -Syu --noconfirm
-        pacman -S --noconfirm python python-pip go base-devel git curl wget npm nodejs ruby rust
-    else
-        echo "ℹ️  Running as user - some packages may need sudo"
-        echo "Please run: sudo pacman -Syu --noconfirm && sudo pacman -S --noconfirm python python-pip go base-devel git curl wget npm nodejs ruby rust"
-    fi
+}
+
+# ── Root check ────────────────────────────────────────────────────────────────
+if [[ $EUID -eq 0 ]]; then
+    install_deps
 else
-    echo "⚠️  Unknown distribution. Please install manually:"
-    echo "   - Python 3.8+ with pip and venv"
-    echo "   - Go 1.19+"
-    echo "   - Git, curl, wget"
-    echo "   - Node.js, npm"
-    echo "   - Ruby, gem"
-    echo "   - Rust, cargo"
+    echo -e "${YELLOW}[!] Not running as root. Trying sudo…${RESET}"
+    sudo bash -c "$(declare -f install_deps); install_deps"
 fi
 
-# Install Python dependencies
-echo "🐍 Installing Python dependencies..."
-pip3 install --user -q tqdm requests
+# ── Python deps ───────────────────────────────────────────────────────────────
+echo -e "${GREEN}[→] Installing Python dependencies…${RESET}"
+python3 -m pip install --upgrade pip --break-system-packages -q
+python3 -m pip install --upgrade tqdm requests --break-system-packages -q
 
-# Setup Go environment for user
-echo "🔧 Setting up Go environment..."
+# ── Go environment ────────────────────────────────────────────────────────────
+echo -e "${GREEN}[→] Configuring Go environment…${RESET}"
+GOPATH_LINE='export GOPATH=$HOME/go'
+PATH_LINE='export PATH=$PATH:$GOPATH/bin'
 
-# Add GOPATH/bin to PATH if not present
-if ! grep -q 'go/bin' ~/.bashrc; then
-    echo 'export PATH=$PATH:~/go/bin' >> ~/.bashrc
-    echo 'export GOPATH=$HOME/go' >> ~/.bashrc
-fi
+for rc in ~/.bashrc ~/.zshrc; do
+    [[ -f "$rc" ]] || continue
+    grep -q 'GOPATH' "$rc" || echo "$GOPATH_LINE" >> "$rc"
+    grep -q 'GOPATH/bin' "$rc" || echo "$PATH_LINE" >> "$rc"
+done
 
-# Create go directories
 mkdir -p ~/go/bin
-
-# Export for current session
-export PATH=$PATH:~/go/bin
 export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 
-# Install pdtm for ProjectDiscovery tools
-echo "📦 Installing pdtm (ProjectDiscovery Tool Manager)..."
-if ! command -v pdtm &> /dev/null; then
-    go install -v github.com/projectdiscovery/pdtm/cmd/pdtm@latest
+# ── Verify Go ─────────────────────────────────────────────────────────────────
+if ! command -v go &>/dev/null; then
+    echo -e "${RED}[✗] go not found after install. Add it to PATH manually.${RESET}"
+else
+    echo -e "${GREEN}[✓] go $(go version | awk '{print $3}')${RESET}"
+fi
+
+# ── Verify Python ─────────────────────────────────────────────────────────────
+echo -e "${GREEN}[✓] python $(python3 --version)${RESET}"
+
+# ── pdtm (optional, ProjectDiscovery tool manager) ────────────────────────────
+if command -v go &>/dev/null && ! command -v pdtm &>/dev/null; then
+    echo -e "${GREEN}[→] Installing pdtm (ProjectDiscovery Tool Manager)…${RESET}"
+    go install -v github.com/projectdiscovery/pdtm/cmd/pdtm@latest 2>/dev/null || true
 fi
 
 echo ""
-echo "✅ Bootstrap completed!"
+echo -e "${BOLD}${GREEN}Bootstrap complete!${RESET}"
 echo ""
-echo "🔧 Next steps:"
-echo "   1. Install core toolkit: python3 reconranger.py -c core"
-echo "   2. Verify installation: python3 reconranger.py --check"
-echo "   3. Start recon: bbot -t example.com -m subfinder httpx nuclei"
+echo "Next steps:"
+echo "  python3 reconranger.py -c core       # Install core toolkit (13 tools)"
+echo "  python3 reconranger.py --categories  # List all categories"
+echo "  python3 reconranger.py --list        # Browse full tool registry"
+echo "  python3 reconranger.py --check       # Check what's installed"
 echo ""
-echo "📖 Documentation: TOOLS.md"
-echo "🌟 Core toolkit covers 95% of recon workflows in <5 minutes!"
+echo "Docs: docs/README.md | Full stack: docs/BugBounty_CLI_Core-Stack.md"
