@@ -4,10 +4,15 @@ ReconRanger v4.0 — Bug Bounty CLI Tool Manager
 Developed by 0xShadowVoid
 """
 
+import os
 import sys
 import json
 import argparse
 from pathlib import Path
+
+# Ensure the project root is on sys.path regardless of where the script is invoked from
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from core.installer import ReconRangerInstaller
 from core.system import SystemManager
 from core.keys import KeyManager
