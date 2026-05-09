@@ -13,11 +13,20 @@ from pathlib import Path
 # Ensure the project root is on sys.path regardless of where the script is invoked from
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.installer import ReconRangerInstaller
-from core.system import SystemManager
-from core.keys import KeyManager
-from core.logger import setup_logging
-from core.config import VERSION, CATEGORIES, TOOL_DEFINITIONS
+try:
+    # flat structure (shadow branch)
+    from installer import ReconRangerInstaller
+    from system import SystemManager
+    from keys import KeyManager
+    from logger import setup_logging
+    from config import VERSION, CATEGORIES, TOOL_DEFINITIONS
+except ImportError:
+    # core/ subdirectory structure (main branch)
+    from core.installer import ReconRangerInstaller
+    from core.system import SystemManager
+    from core.keys import KeyManager
+    from core.logger import setup_logging
+    from core.config import VERSION, CATEGORIES, TOOL_DEFINITIONS
 
 TOOLS_FILE = Path(__file__).parent / "tools.json"
 
