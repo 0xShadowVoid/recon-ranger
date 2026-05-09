@@ -5,8 +5,12 @@ import shutil
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional
-from core.system import SystemManager
-from core.logger import setup_logging
+try:
+    from system import SystemManager
+    from logger import setup_logging
+except ImportError:
+    from core.system import SystemManager
+    from core.logger import setup_logging
 
 logger = setup_logging()
 
