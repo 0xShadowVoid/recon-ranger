@@ -1,4 +1,142 @@
 {
+  "_categories": {
+    "core": [
+      "bbot",
+      "subfinder",
+      "gau",
+      "dnsx",
+      "puredns",
+      "httpx",
+      "naabu",
+      "nmap",
+      "katana",
+      "gospider",
+      "ffuf",
+      "feroxbuster",
+      "gobuster",
+      "dirsearch",
+      "kiterunner",
+      "arjun",
+      "gf",
+      "paramspider",
+      "linkfinder",
+      "jsluice",
+      "gitleaks",
+      "trufflehog",
+      "git-dumper",
+      "secretfinder",
+      "hakoriginfinder",
+      "wafw00f",
+      "gowitness",
+      "nuclei",
+      "interactsh",
+      "sqlmap",
+      "dalfox",
+      "ssrfmap",
+      "corsy",
+      "jwt_tool",
+      "subzy",
+      "anew",
+      "notify",
+      "uro"
+    ],
+    "subdomains": [
+      "shuffledns",
+      "puredns",
+      "github-subdomains",
+      "assetfinder",
+      "amass",
+      "sublist3r",
+      "subdomainizer"
+    ],
+    "ports": [
+      "nmap",
+      "naabu",
+      "masscan",
+      "metabigor"
+    ],
+    "fuzzing": [
+      "ffuf",
+      "feroxbuster",
+      "gobuster",
+      "dirsearch",
+      "kiterunner"
+    ],
+    "web": [
+      "arjun",
+      "x8",
+      "paramspider",
+      "cewl"
+    ],
+    "js": [
+      "linkfinder",
+      "jsfinder",
+      "jsleak",
+      "jsluice",
+      "jsecret"
+    ],
+    "secrets": [
+      "secretfinder",
+      "gitleaks",
+      "trufflehog",
+      "git-dumper",
+      "githound"
+    ],
+    "osint": [
+      "gau",
+      "waybackurls",
+      "github-dorks",
+      "virustotalx",
+      "jeeves"
+    ],
+    "vuln": [
+      "xsstrike",
+      "dalfox",
+      "sqlmap",
+      "ghauri",
+      "dotdotpwn",
+      "graphqlmap",
+      "nosqlmap",
+      "cvinder",
+      "aidor",
+      "metasploit-framework",
+      "ssrfmap",
+      "corsy",
+      "jwt_tool"
+    ],
+    "cloud": [
+      "cloud_enum",
+      "s3scanner"
+    ],
+    "takeover": [
+      "subjack",
+      "subzy"
+    ],
+    "cms": [
+      "wpscan",
+      "droopescan",
+      "nikto"
+    ],
+    "fingerprinting": [
+      "wafw00f",
+      "graphw00f",
+      "gowitness",
+      "hakoriginfinder"
+    ],
+    "automation": [
+      "pegpon",
+      "reconftw"
+    ],
+    "utils": [
+      "anew",
+      "gf",
+      "seclists",
+      "interactsh",
+      "uro",
+      "notify",
+      "enumrust"
+    ]
+  },
   "aidor": {
     "binary": "aidor",
     "category": "vuln",
@@ -7,7 +145,10 @@
     "example": "aidor -u https://target.com",
     "path": "/opt/AIDOR",
     "repo": "https://github.com/abdulahadtheCyber-pixel/AIDOR.git",
-    "requirements": ["-r", "/opt/AIDOR/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/AIDOR/requirements.txt"
+    ],
     "type": "git"
   },
   "amass": {
@@ -75,7 +216,10 @@
     "example": "python3 corsy.py -u https://target.com",
     "path": "/opt/Corsy",
     "repo": "https://github.com/s0md3v/Corsy.git",
-    "requirements": ["-r", "/opt/Corsy/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/Corsy/requirements.txt"
+    ],
     "type": "git"
   },
   "cvinder": {
@@ -86,7 +230,10 @@
     "example": "cvinder -d target.com",
     "path": "/opt/CVINDER",
     "repo": "https://github.com/3a7/CVINDER.git",
-    "requirements": ["-r", "/opt/CVINDER/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/CVINDER/requirements.txt"
+    ],
     "type": "git"
   },
   "dalfox": {
@@ -105,7 +252,10 @@
     "example": "dirsearch -u https://target.com",
     "path": "/opt/dirsearch",
     "repo": "https://github.com/maurosoria/dirsearch.git",
-    "requirements": ["-r", "/opt/dirsearch/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/dirsearch/requirements.txt"
+    ],
     "type": "git"
   },
   "dnsx": {
@@ -185,7 +335,10 @@
     "example": "python3 ghauri.py -u https://target.com",
     "path": "/opt/ghauri",
     "repo": "https://github.com/r0oth3x49/ghauri.git",
-    "requirements": ["-r", "/opt/ghauri/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/ghauri/requirements.txt"
+    ],
     "type": "git"
   },
   "git-dumper": {
@@ -200,7 +353,7 @@
     "binary": "githound",
     "build_cmd": "go build -o githound .",
     "category": "secrets",
-    "description": "GitHub secrets hunter — scans repos for leaked credentials and keys",
+    "description": "GitHub secrets hunter \u2014 scans repos for leaked credentials and keys",
     "example": "githound --org target-org --keywords api_key,secret",
     "path": "/opt/git-hound",
     "repo": "https://github.com/tillson/git-hound.git",
@@ -214,7 +367,10 @@
     "example": "github-dorks -u target-org",
     "path": "/opt/github-dorks",
     "repo": "https://github.com/techgaun/github-dorks.git",
-    "requirements": ["-r", "/opt/github-dorks/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/github-dorks/requirements.txt"
+    ],
     "type": "git"
   },
   "github-subdomains": {
@@ -265,7 +421,10 @@
     "example": "python3 graphqlmap.py -u https://target.com/graphql",
     "path": "/opt/GraphQLmap",
     "repo": "https://github.com/swisskyrepo/GraphQLmap.git",
-    "requirements": ["-r", "/opt/GraphQLmap/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/GraphQLmap/requirements.txt"
+    ],
     "type": "git"
   },
   "graphw00f": {
@@ -276,7 +435,10 @@
     "example": "graphw00f -t https://target.com/graphql",
     "path": "/opt/graphw00f",
     "repo": "https://github.com/dolevf/graphw00f.git",
-    "requirements": ["-r", "/opt/graphw00f/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/graphw00f/requirements.txt"
+    ],
     "type": "git"
   },
   "hakoriginfinder": {
@@ -311,7 +473,10 @@
     "example": "python3 jeeves.py -d target.com",
     "path": "/opt/jeeves",
     "repo": "https://github.com/ferreiraklet/Jeeves.git",
-    "requirements": ["-r", "/opt/jeeves/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/jeeves/requirements.txt"
+    ],
     "type": "git"
   },
   "jsecret": {
@@ -322,7 +487,10 @@
     "example": "jsecret -u https://target.com",
     "path": "/opt/jsecret",
     "repo": "https://github.com/raoufmaklouf/jsecret.git",
-    "requirements": ["-r", "/opt/jsecret/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/jsecret/requirements.txt"
+    ],
     "type": "git"
   },
   "jsfinder": {
@@ -333,7 +501,10 @@
     "example": "python3 JSFinder.py -u https://target.com",
     "path": "/opt/jsfinder",
     "repo": "https://github.com/0x240x23elu/jsfinder.git",
-    "requirements": ["-r", "/opt/jsfinder/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/jsfinder/requirements.txt"
+    ],
     "type": "git"
   },
   "jsleak": {
@@ -360,7 +531,10 @@
     "example": "python3 jwt_tool.py <JWT> -T",
     "path": "/opt/jwt_tool",
     "repo": "https://github.com/ticarpi/jwt_tool.git",
-    "requirements": ["-r", "/opt/jwt_tool/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/jwt_tool/requirements.txt"
+    ],
     "type": "git"
   },
   "katana": {
@@ -389,14 +563,17 @@
     "example": "python3 linkfinder.py -i https://target.com/main.js -o cli",
     "path": "/opt/LinkFinder",
     "repo": "https://github.com/GerbenJavado/LinkFinder.git",
-    "requirements": ["-r", "/opt/LinkFinder/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/LinkFinder/requirements.txt"
+    ],
     "type": "git"
   },
   "masscan": {
     "binary": "masscan",
     "build_cmd": "make -j$(nproc)",
     "category": "ports",
-    "description": "Internet-scale port scanner — all 65535 ports in minutes",
+    "description": "Internet-scale port scanner \u2014 all 65535 ports in minutes",
     "example": "masscan -p1-65535 --rate=10000 target.com",
     "path": "/opt/masscan",
     "repo": "https://github.com/robertdavidgraham/masscan.git",
@@ -455,7 +632,10 @@
     "example": "python3 nosqlmap.py -u https://target.com",
     "path": "/opt/NoSQLMap",
     "repo": "https://github.com/codingo/NoSQLMap.git",
-    "requirements": ["-r", "/opt/NoSQLMap/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/NoSQLMap/requirements.txt"
+    ],
     "type": "git"
   },
   "notify": {
@@ -528,7 +708,10 @@
     "example": "python3 SecretFinder.py -i https://target.com/main.js -o cli",
     "path": "/opt/SecretFinder",
     "repo": "https://github.com/m4ll0k/SecretFinder.git",
-    "requirements": ["-r", "/opt/SecretFinder/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/SecretFinder/requirements.txt"
+    ],
     "type": "git"
   },
   "seclists": {
@@ -561,12 +744,15 @@
   "ssrfmap": {
     "binary": "ssrfmap",
     "category": "vuln",
-    "description": "Automatic SSRF detection and exploitation — supports 17 payloads",
+    "description": "Automatic SSRF detection and exploitation \u2014 supports 17 payloads",
     "entrypoint": "/opt/SSRFmap/ssrfmap.py",
     "example": "python3 ssrfmap.py -r request.txt -p url",
     "path": "/opt/SSRFmap",
     "repo": "https://github.com/swisskyrepo/SSRFmap.git",
-    "requirements": ["-r", "/opt/SSRFmap/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/SSRFmap/requirements.txt"
+    ],
     "type": "git"
   },
   "subdomainizer": {
@@ -577,7 +763,10 @@
     "example": "subdomainizer -u https://target.com -o results.txt",
     "path": "/opt/SubDomainizer",
     "repo": "https://github.com/nsonaniya2010/SubDomainizer.git",
-    "requirements": ["-r", "/opt/SubDomainizer/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/SubDomainizer/requirements.txt"
+    ],
     "type": "git"
   },
   "subfinder": {
@@ -638,13 +827,16 @@
     "example": "virustotalx -d target.com --api-key VT_KEY",
     "path": "/opt/virustotalx",
     "repo": "https://github.com/ru3y7/virustotalx.git",
-    "requirements": ["-r", "/opt/virustotalx/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/virustotalx/requirements.txt"
+    ],
     "type": "git"
   },
   "wafw00f": {
     "binary": "wafw00f",
     "category": "fingerprinting",
-    "description": "WAF detection and fingerprinting — identifies 180+ WAF products",
+    "description": "WAF detection and fingerprinting \u2014 identifies 180+ WAF products",
     "example": "wafw00f https://target.com",
     "package": "wafw00f",
     "type": "python"
@@ -660,7 +852,7 @@
   "wpscan": {
     "binary": "wpscan",
     "category": "cms",
-    "description": "WordPress security scanner — themes, plugins, users, and CVEs",
+    "description": "WordPress security scanner \u2014 themes, plugins, users, and CVEs",
     "example": "wpscan --url https://target.com --enumerate vp,vt,u",
     "package": "wpscan",
     "type": "ruby"
@@ -668,7 +860,7 @@
   "x8": {
     "binary": "x8",
     "category": "web",
-    "description": "Hidden HTTP parameter discovery written in Rust — fast and precise",
+    "description": "Hidden HTTP parameter discovery written in Rust \u2014 fast and precise",
     "example": "x8 -u https://target.com/ -w wordlist.txt",
     "package": "x8",
     "type": "cargo"
@@ -681,7 +873,10 @@
     "example": "python3 xsstrike.py -u 'https://target.com/search?q=test'",
     "path": "/opt/XSStrike",
     "repo": "https://github.com/s0md3v/XSStrike.git",
-    "requirements": ["-r", "/opt/XSStrike/requirements.txt"],
+    "requirements": [
+      "-r",
+      "/opt/XSStrike/requirements.txt"
+    ],
     "type": "git"
   }
 }
